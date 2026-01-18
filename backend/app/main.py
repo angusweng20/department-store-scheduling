@@ -84,6 +84,16 @@ staff_db = {}
 schedule_db = {}
 rules_db = {}
 
+# 健康檢查路由
+@app.get("/health")
+async def health_check():
+    """健康檢查端點"""
+    return {
+        "status": "healthy",
+        "timestamp": datetime.now().isoformat(),
+        "version": "1.0.0"
+    }
+
 # 根路由
 @app.get("/")
 async def root():
