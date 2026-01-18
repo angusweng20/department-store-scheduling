@@ -179,7 +179,8 @@ async def health_check():
     return {
         "status": "healthy",
         "timestamp": datetime.now().isoformat(),
-        "version": "1.0.0"
+        "version": "1.0.1",  # 更新版本號強制重新部署
+        "line_configured": bool(os.getenv("LINE_CHANNEL_ACCESS_TOKEN") and os.getenv("LINE_CHANNEL_SECRET"))
     }
 
 # 根路由
