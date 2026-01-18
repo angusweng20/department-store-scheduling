@@ -24,5 +24,5 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:8000/health || exit 1
 
-# 啟動命令 - 使用 Railway 的 PORT 環境變數
-CMD ["sh", "-c", "python3 -m uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# 啟動命令 - 使用簡化版本進行測試
+CMD ["sh", "-c", "python3 -m uvicorn app.simple_main:app --host 0.0.0.0 --port ${PORT:-8000}"]
