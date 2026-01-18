@@ -161,7 +161,7 @@ def verify_line_signature(body, signature):
         hashlib.sha256
     ).digest()
     
-    signature_calculated = 'sha256=' + hash.hexdigest()
+    signature_calculated = 'sha256=' + hash.hex()
     return hmac.compare_digest(signature, signature_calculated)
 
 # LINE Webhook - 完整處理
