@@ -24,5 +24,5 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:8080/health || exit 1
 
-# 啟動命令 - 使用 LINE Bot 工作版本
-CMD ["sh", "-c", "python3 -m uvicorn app.line_working_main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# 啟動命令 - 使用完整 LINE Bot 版本
+CMD ["sh", "-c", "python3 -m uvicorn app.full_line_main:app --host 0.0.0.0 --port ${PORT:-8000}"]
