@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: department-store-scheduling
+    env: python
+    plan: free
+    buildCommand: "cd backend && pip install -r requirements.txt"
+    startCommand: "cd backend && python3 -m uvicorn app.working_main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: SUPABASE_URL
+        value: https://evaknuoxsjlrcznmqqvq.supabase.co
+      - key: SUPABASE_KEY
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2YWtudW94c2pscmN6bm1xcXZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg2NzQ3NjAsImV4cCI6MjA4NDI1MDc2MH0.S9coLBZz9ydlfkwoVKxieJ-h_cp2AhGTDUR55r30rqI
+      - key: SUPABASE_SERVICE_KEY
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2YWtudW94c2pscmN6bm1xcXZxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2ODY3NDc2MCwiZXhwIjoyMDg0MjUwNzYwfQ.liEViySJgLRuAUixFHfJ4D9JQv6iDMkLA3IHdTA3mhs
+      - key: LINE_CHANNEL_ACCESS_TOKEN
+        value: EiNyZ7k5oruKDrEuvQvQq4X5xgbJn34T3TB77sgb54dZNRLRH/jGBI2WIGCb9zQABXa2EWveGhO0UwUgWIXCFwD4ab7w+WMtbPzaRaoFKyukt6UmdmIZ3m4krqIFaXzdbdS9AgaoR2DukT+HLoAtMwdB04t89/1O/w1cDnyilFU=
+      - key: LINE_CHANNEL_SECRET
+        value: 59b664f0376ad31626b4f15bff8bce65
