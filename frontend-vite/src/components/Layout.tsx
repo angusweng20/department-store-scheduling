@@ -38,6 +38,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 儀表板
               </Link>
               <Link 
+                to="/my-schedule" 
+                className={`px-2 lg:px-3 py-2 text-xs sm:text-sm font-medium transition-colors ${
+                  isActive('/my-schedule') 
+                    ? 'text-blue-600 border-b-2 border-blue-600' 
+                    : 'text-gray-700 hover:text-blue-600'
+                }`}
+              >
+                我的班表
+              </Link>
+              <Link 
                 to="/schedules" 
                 className={`px-2 lg:px-3 py-2 text-xs sm:text-sm font-medium transition-colors ${
                   isActive('/schedules') 
@@ -111,6 +121,17 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 儀表板
+              </Link>
+              <Link 
+                to="/my-schedule" 
+                className={`block px-3 py-2 text-sm font-medium transition-colors ${
+                  isActive('/my-schedule') 
+                    ? 'text-blue-600 bg-blue-50' 
+                    : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+                }`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                我的班表
               </Link>
               <Link 
                 to="/schedules" 
