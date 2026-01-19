@@ -1,15 +1,11 @@
 {
   "version": 2,
   "name": "department-store-scheduling",
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    }
-  ],
+  "buildCommand": "npm install && npm run build",
+  "outputDirectory": "dist",
+  "framework": null,
+  "installCommand": "npm install",
+  "functions": {},
   "routes": [
     {
       "src": "/(.*)",
