@@ -10,25 +10,57 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createClient(supabaseUrl || '', supabaseAnonKey || '');
 
-type Staff = Database['public']['Tables']['staff']['Row'];
-type Schedule = Database['public']['Tables']['schedules']['Row'];
-type LeaveRequest = Database['public']['Tables']['leave_requests']['Row'];
+// 類型定義
+export interface ScheduleData {
+  id: string;
+  staff_id: string;
+  shift_date: string;
+  start_time: string;
+  end_time: string;
+  shift_type: 'early' | 'late' | 'full';
+  shift_name: string;
+  status: 'scheduled' | 'completed' | 'cancelled';
+  created_at: string;
+  updated_at: string;
+}
+
+export interface LeaveRequestData {
+  id: string;
+  user_id: string;
+  date: string;
+  reason?: string;
+  status: 'pending' | 'approved' | 'rejected';
+  created_at: string;
+  updated_at: string;
+}
+
+export interface StaffData {
+  id: string;
+  name: string;
+  email: string;
+  department: string;
+  position: string;
+  hire_date: string;
+  status: 'active' | 'inactive' | 'terminated';
+  created_at: string;
+  updated_at: string;
+}
 
 // 員工服務
 export const staffService = {
   // 獲取所有員工
-  async getAllStaff(): Promise<Staff[]> {
+  async getAllStaff() {
     const { data, error } = await supabase
       .from('staff')
       .select('*')
       .order('created_at', { ascending: false });
     
     if (error) throw error;
-    return data || [];
+    return data as StaffData[];
   },
 
-  // 獲取特定員工
-  async getStaffById(id: string): Promise<Staff | null> {
+  // 根據ID獲取員工
+  async getStaffById(id: string) {
     const { data, error } = await supabase
       .from('staff')
       .select('*')
@@ -36,170 +68,157 @@ export const staffService = {
       .single();
     
     if (error) throw error;
-    return data;
+    return data as StaffData;
   },
 
   // 創建員工
-  async createStaff(staff: Omit<Database['public']['Tables']['staff']['Insert'], 'id'>): Promise<Staff> {
+  async createStaff(staff: Omit<StaffData, 'id' | 'created_at' | 'updated_at'>) {
     const { data, error } = await supabase
       .from('staff')
       .insert([staff])
-      .select('*')
+      .select()
       .single();
     
     if (error) throw error;
-    return data;
+    return data as StaffData;
   },
 
   // 更新員工
-  async updateStaff(id: string, staff: Partial<Database['public']['Tables']['staff']['Update']>): Promise<Staff> {
+  async updateStaff(id: string, updates: Partial<StaffData>) {
     const { data, error } = await supabase
       .from('staff')
-      .update(staff)
+      .update(updates)
       .eq('id', id)
-      .select('*')
+      .select()
       .single();
     
     if (error) throw error;
-    return data;
+    return data as StaffData;
   },
 
   // 刪除員工
-  async deleteStaff(id: string): Promise<void> {
+  async deleteStaff(id: string) {
     const { error } = await supabase
       .from('staff')
       .delete()
       .eq('id', id);
     
     if (error) throw error;
-  },
+  }
 };
 
 // 排班服務
 export const scheduleService = {
-  // 獲取所有排班
-  async getAllSchedules(): Promise<Schedule[]> {
-    const { data, error } = await supabase
+  // 獲取員工排班
+  async getSchedulesByStaff(staffId: string, startDate?: string, endDate?: string) {
+    let query = supabase
       .from('schedules')
       .select('*')
-      .order('schedule_date', { ascending: false });
+      .eq('staff_id', staffId);
+    
+    if (startDate) {
+      query = query.gte('shift_date', startDate);
+    }
+    if (endDate) {
+      query = query.lte('shift_date', endDate);
+    }
+    
+    const { data, error } = await query
+      .order('shift_date', { ascending: true });
     
     if (error) throw error;
-    return data || [];
+    return data as ScheduleData[];
   },
 
-  // 獲取特定排班
-  async getScheduleById(id: string): Promise<Schedule | null> {
-    const { data, error } = await supabase
-      .from('schedules')
-      .select('*')
-      .eq('id', id)
-      .single();
+  // 獲取月份排班
+  async getSchedulesByMonth(staffId: string, year: number, month: number) {
+    const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
+    const endDate = `${year}-${String(month).padStart(2, '0')}-31`;
     
-    if (error) throw error;
-    return data;
+    return await this.getSchedulesByStaff(staffId, startDate, endDate);
   },
 
   // 創建排班
-  async createSchedule(schedule: Omit<Database['public']['Tables']['schedules']['Insert'], 'id'>): Promise<Schedule> {
+  async createSchedule(schedule: Omit<ScheduleData, 'id' | 'created_at' | 'updated_at'>) {
     const { data, error } = await supabase
       .from('schedules')
       .insert([schedule])
-      .select('*')
+      .select()
       .single();
     
     if (error) throw error;
-    return data;
+    return data as ScheduleData;
   },
 
   // 更新排班
-  async updateSchedule(id: string, schedule: Partial<Database['public']['Tables']['schedules']['Update']>): Promise<Schedule> {
+  async updateSchedule(id: string, updates: Partial<ScheduleData>) {
     const { data, error } = await supabase
       .from('schedules')
-      .update(schedule)
+      .update(updates)
       .eq('id', id)
-      .select('*')
+      .select()
       .single();
     
     if (error) throw error;
-    return data;
+    return data as ScheduleData;
   },
 
   // 刪除排班
-  async deleteSchedule(id: string): Promise<void> {
+  async deleteSchedule(id: string) {
     const { error } = await supabase
       .from('schedules')
       .delete()
       .eq('id', id);
     
     if (error) throw error;
-  },
-
-  // 獲取員工排班
-  async getSchedulesByStaffId(staffId: string): Promise<Schedule[]> {
-    const { data, error } = await supabase
-      .from('schedules')
-      .select('*')
-      .eq('staff_id', staffId)
-      .order('schedule_date', { ascending: false });
-    
-    if (error) throw error;
-    return data || [];
-  },
+  }
 };
 
-// 請假申請服務
+// 劃假服務
 export const leaveRequestService = {
-  // 獲取所有請假申請
-  async getAllLeaveRequests(): Promise<LeaveRequest[]> {
-    const { data, error } = await supabase
+  // 獲取用戶劃假
+  async getLeaveRequestsByUser(userId: string, startDate?: string, endDate?: string) {
+    let query = supabase
       .from('leave_requests')
       .select('*')
-      .order('created_at', { ascending: false });
+      .eq('user_id', userId);
+    
+    if (startDate) {
+      query = query.gte('date', startDate);
+    }
+    if (endDate) {
+      query = query.lte('date', endDate);
+    }
+    
+    const { data, error } = await query
+      .order('date', { ascending: true });
     
     if (error) throw error;
-    return data || [];
+    return data as LeaveRequestData[];
   },
 
-  // 獲取特定請假申請
-  async getLeaveRequestById(id: string): Promise<LeaveRequest | null> {
-    const { data, error } = await supabase
-      .from('leave_requests')
-      .select('*')
-      .eq('id', id)
-      .single();
+  // 獲取月份劃假
+  async getLeaveRequestsByMonth(userId: string, year: number, month: number) {
+    const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
+    const endDate = `${year}-${String(month).padStart(2, '0')}-31`;
     
-    if (error) throw error;
-    return data;
+    return await this.getLeaveRequestsByUser(userId, startDate, endDate);
   },
 
-  // 創建請假申請
-  async createLeaveRequest(leaveRequest: Omit<Database['public']['Tables']['leave_requests']['Insert'], 'id'>): Promise<LeaveRequest> {
+  // 申請劃假
+  async createLeaveRequest(leaveRequest: Omit<LeaveRequestData, 'id' | 'created_at' | 'updated_at'>) {
     const { data, error } = await supabase
       .from('leave_requests')
       .insert([leaveRequest])
-      .select('*')
+      .select()
       .single();
     
     if (error) throw error;
-    return data;
+    return data as LeaveRequestData;
   },
 
-  // 更新請假申請
-  async updateLeaveRequest(id: string, leaveRequest: Partial<Database['public']['Tables']['leave_requests']['Update']>): Promise<LeaveRequest> {
-    const { data, error } = await supabase
-      .from('leave_requests')
-      .update(leaveRequest)
-      .eq('id', id)
-      .select('*')
-      .single();
-    
-    if (error) throw error;
-    return data;
-  },
-
-  // 刪除請假申請
-  async deleteLeaveRequest(id: string): Promise<void> {
+  // 取消劃假
+  async cancelLeaveRequest(id: string) {
     const { error } = await supabase
       .from('leave_requests')
       .delete()
@@ -208,47 +227,67 @@ export const leaveRequestService = {
     if (error) throw error;
   },
 
-  // 獲取員工請假申請
-  async getLeaveRequestsByStaffId(staffId: string): Promise<LeaveRequest[]> {
+  // 更新劃假狀態
+  async updateLeaveRequestStatus(id: string, status: 'pending' | 'approved' | 'rejected') {
     const { data, error } = await supabase
       .from('leave_requests')
-      .select('*')
-      .eq('staff_id', staffId)
-      .order('created_at', { ascending: false });
+      .update({ status })
+      .eq('id', id)
+      .select()
+      .single();
     
     if (error) throw error;
-    return data || [];
-  },
+    return data as LeaveRequestData;
+  }
 };
 
 // 統計服務
 export const statsService = {
-  // 獲取統計資料
-  async getStats() {
-    const [staffResult, schedulesResult, leaveRequestsResult] = await Promise.all([
-      supabase.from('staff').select('id', { count: 'exact', head: true }),
-      supabase.from('schedules').select('id', { count: 'exact', head: true }),
-      supabase.from('leave_requests').select('id', { count: 'exact', head: true }),
-    ]);
-
-    const today = new Date().toISOString().split('T')[0];
+  // 獲取員工統計
+  async getStaffStats() {
+    const { data, error } = await supabase
+      .from('staff')
+      .select('status')
+      .then(({ data }) => {
+        const stats = data?.reduce((acc, staff) => {
+          acc[staff.status] = (acc[staff.status] || 0) + 1;
+          return acc;
+        }, {} as Record<string, number>) || {};
+        
+        return { data: stats, error: null };
+      });
     
-    const [todaySchedulesResult, pendingLeavesResult] = await Promise.all([
-      supabase.from('schedules').select('id', { count: 'exact', head: true }).eq('schedule_date', today),
-      supabase.from('leave_requests').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
-    ]);
-
-    return {
-      total_staff: staffResult.count || 0,
-      total_schedules: schedulesResult.count || 0,
-      total_leave_requests: leaveRequestsResult.count || 0,
-      today_schedules: todaySchedulesResult.count || 0,
-      pending_leaves: pendingLeavesResult.count || 0,
-    };
+    if (error) throw error;
+    return data;
   },
+
+  // 獲取排班統計
+  async getScheduleStats(staffId: string, year: number, month: number) {
+    const schedules = await scheduleService.getSchedulesByMonth(staffId, year, month);
+    const leaveRequests = await leaveRequestService.getLeaveRequestsByMonth(staffId, year, month);
+    
+    const totalHours = schedules.reduce((total, schedule) => {
+      const start = new Date(`2000-01-01T${schedule.start_time}`);
+      const end = new Date(`2000-01-01T${schedule.end_time}`);
+      let diff = (end.getTime() - start.getTime()) / (1000 * 60 * 60);
+      if (diff < 0) diff += 24;
+      return total + diff;
+    }, 0);
+    
+    const leaveDays = leaveRequests.filter(request => 
+      request.status === 'approved' || request.status === 'pending'
+    ).length;
+    
+    return {
+      totalHours,
+      leaveDays,
+      scheduledDays: schedules.length,
+      workingDays: schedules.length + leaveDays
+    };
+  }
 };
 
-// 實時訂閱服務
+// 即時服務
 export const realtimeService = {
   // 訂閱員工變更
   subscribeToStaff(callback: (payload: any) => void): RealtimeChannel {
@@ -264,10 +303,10 @@ export const realtimeService = {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'schedules' }, callback);
   },
 
-  // 訂閱請假申請變更
+  // 訂閱劃假變更
   subscribeToLeaveRequests(callback: (payload: any) => void): RealtimeChannel {
     return supabase
       .channel('public:leave_requests')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'leave_requests' }, callback);
-  },
+  }
 };

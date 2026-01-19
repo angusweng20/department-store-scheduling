@@ -11,12 +11,23 @@ interface ScheduleData {
   colleagues?: string[];
 }
 
-interface CalendarProps {
-  schedules: ScheduleData[];
-  onDateClick: (date: Date, schedule?: ScheduleData) => void;
+interface LeaveRequestData {
+  id: string;
+  user_id: string;
+  date: string;
+  reason?: string;
+  status: 'pending' | 'approved' | 'rejected';
+  created_at: string;
+  updated_at: string;
 }
 
-const Calendar: React.FC<CalendarProps> = ({ schedules, onDateClick }) => {
+interface CalendarProps {
+  schedules: ScheduleData[];
+  leaveRequests: LeaveRequestData[];
+  onDateClick: (date: Date, schedule?: ScheduleData, leaveRequest?: LeaveRequestData) => void;
+}
+
+const Calendar: React.FC<CalendarProps> = ({ schedules, leaveRequests, onDateClick }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   
   const monthStart = startOfMonth(currentMonth);
@@ -31,6 +42,12 @@ const Calendar: React.FC<CalendarProps> = ({ schedules, onDateClick }) => {
   const getScheduleForDate = (date: Date): ScheduleData | undefined => {
     const dateStr = format(date, 'yyyy-MM-dd');
     return schedules.find(schedule => schedule.date === dateStr);
+  };
+  
+  // 獲取指定日期的劃假
+  const getLeaveRequestForDate = (date: Date): LeaveRequestData | undefined => {
+    const dateStr = format(date, 'yyyy-MM-dd');
+    return leaveRequests.find(request => request.date === dateStr);
   };
   
   // 獲取班次顏色
@@ -61,7 +78,15 @@ const Calendar: React.FC<CalendarProps> = ({ schedules, onDateClick }) => {
     }, 0);
   };
   
+  // 計算本月劃假天數
+  const calculateMonthlyLeaveDays = (): number => {
+    return leaveRequests.filter(request => 
+      request.status === 'approved' || request.status === 'pending'
+    ).length;
+  };
+  
   const monthlyHours = calculateMonthlyHours();
+  const monthlyLeaveDays = calculateMonthlyLeaveDays();
   
   return (
     <div className="bg-white rounded-lg shadow-md p-4">
@@ -80,9 +105,10 @@ const Calendar: React.FC<CalendarProps> = ({ schedules, onDateClick }) => {
           <h2 className="text-lg font-semibold text-gray-900">
             {format(currentMonth, 'yyyy年 MMMM', { locale: zhTW })}
           </h2>
-          <p className="text-sm text-gray-600">
-            本月累計工時: {monthlyHours.toFixed(1)} 小時
-          </p>
+          <div className="flex justify-center space-x-4 text-sm text-gray-600">
+            <span>工時: {monthlyHours.toFixed(1)}h</span>
+            <span>劃假: {monthlyLeaveDays}天</span>
+          </div>
         </div>
         
         <button
@@ -114,37 +140,50 @@ const Calendar: React.FC<CalendarProps> = ({ schedules, onDateClick }) => {
         {/* 月份天數 */}
         {monthDays.map((date) => {
           const schedule = getScheduleForDate(date);
+          const leaveRequest = getLeaveRequestForDate(date);
           const isCurrentMonth = isSameMonth(date, currentMonth);
           const isToday = isSameDay(date, new Date());
           
           return (
             <button
               key={date.toISOString()}
-              onClick={() => onDateClick(date, schedule)}
+              onClick={() => onDateClick(date, schedule, leaveRequest)}
               className={`
                 aspect-square flex flex-col items-center justify-center
                 rounded-lg border border-gray-200
                 transition-all duration-200
                 ${isCurrentMonth ? 'hover:bg-gray-50' : 'opacity-40'}
                 ${isToday ? 'ring-2 ring-blue-500' : ''}
-                ${schedule ? 'cursor-pointer' : 'cursor-default'}
+                ${leaveRequest ? 'bg-gray-50 border-gray-300' : ''}
+                ${schedule || leaveRequest ? 'cursor-pointer' : 'cursor-default'}
               `}
             >
               <span className={`
                 text-sm font-medium
                 ${isCurrentMonth ? 'text-gray-900' : 'text-gray-400'}
                 ${isToday ? 'text-blue-600' : ''}
+                ${leaveRequest ? 'text-gray-500 line-through' : ''}
               `}>
                 {format(date, 'd')}
               </span>
               
-              {/* 班次圓點 */}
-              {schedule && (
-                <div className={`
-                  w-2 h-2 rounded-full mt-1
-                  ${getShiftColor(schedule.type)}
-                `} />
-              )}
+              {/* 標記顯示 */}
+              <div className="flex items-center space-x-1 mt-1">
+                {/* 班次圓點 */}
+                {schedule && (
+                  <div className={`
+                    w-2 h-2 rounded-full
+                    ${getShiftColor(schedule.type)}
+                  `} />
+                )}
+                
+                {/* 劃假標記 */}
+                {leaveRequest && (
+                  <div className="w-2 h-2 rounded bg-gray-400 flex items-center justify-center">
+                    <span className="text-xs text-white">🚫</span>
+                  </div>
+                )}
+              </div>
             </button>
           );
         })}
