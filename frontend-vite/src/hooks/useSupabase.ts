@@ -1,172 +1,116 @@
 import { useState, useEffect } from 'react';
-import { 
-  staffService, 
-  scheduleService, 
-  leaveRequestService, 
-  statsService, 
-  realtimeService,
-  type ScheduleData,
-  type LeaveRequestData,
-  type StaffData
-} from '../services/supabaseService';
+
+interface ScheduleData {
+  date: string;
+  type: 'early' | 'late' | 'full';
+  startTime: string;
+  endTime: string;
+  shiftName: string;
+  colleagues?: string[];
+}
+
+interface LeaveRequestData {
+  id: string;
+  user_id: string;
+  date: string;
+  reason?: string;
+  status: 'pending' | 'approved' | 'rejected';
+  created_at: string;
+  updated_at: string;
+}
 
 export const useSupabase = (userId?: string) => {
-  const [staff, setStaff] = useState<StaffData[]>([]);
   const [schedules, setSchedules] = useState<ScheduleData[]>([]);
   const [leaveRequests, setLeaveRequests] = useState<LeaveRequestData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // 獲取員工數據
-  const fetchStaff = async () => {
-    try {
-      const data = await staffService.getAllStaff();
-      setStaff(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '獲取員工數據失敗');
+  // 模擬資料
+  const mockSchedules: ScheduleData[] = [
+    { date: '2026-01-05', type: 'early', startTime: '08:00', endTime: '16:00', shiftName: '早班A', colleagues: ['王小美', '李小明'] },
+    { date: '2026-01-06', type: 'late', startTime: '16:00', endTime: '00:00', shiftName: '晚班B', colleagues: ['張小華'] },
+    { date: '2026-01-07', type: 'full', startTime: '08:00', endTime: '20:00', shiftName: '全班C', colleagues: ['陳小芳', '劉小強'] },
+    { date: '2026-01-12', type: 'early', startTime: '08:00', endTime: '16:00', shiftName: '早班A', colleagues: [] },
+    { date: '2026-01-15', type: 'late', startTime: '16:00', endTime: '00:00', shiftName: '晚班B', colleagues: ['黃小美'] },
+    { date: '2026-01-20', type: 'full', startTime: '08:00', endTime: '20:00', shiftName: '全班C', colleagues: ['林小華', '吳小明'] },
+  ];
+  
+  const mockLeaveRequests: LeaveRequestData[] = [
+    { 
+      id: '1', 
+      user_id: 'mock-user-id', 
+      date: '2026-01-10', 
+      reason: '家裡有事', 
+      status: 'pending', 
+      created_at: '2026-01-01T00:00:00Z', 
+      updated_at: '2026-01-01T00:00:00Z' 
+    },
+    { 
+      id: '2', 
+      user_id: 'mock-user-id', 
+      date: '2026-01-25', 
+      reason: '身體不適', 
+      status: 'approved', 
+      created_at: '2026-01-01T00:00:00Z', 
+      updated_at: '2026-01-01T00:00:00Z' 
     }
+  ];
+
+  // 模擬 API 調用
+  const fetchSchedulesByMonth = async (staffId: string, year: number, month: number): Promise<ScheduleData[]> => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(mockSchedules);
+      }, 500);
+    });
   };
 
-  // 獲取排班數據
-  const fetchSchedules = async (staffId?: string) => {
-    try {
-      if (staffId) {
-        const data = await scheduleService.getSchedulesByStaff(staffId);
-        setSchedules(data);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '獲取排班數據失敗');
-    }
+  const fetchLeaveRequestsByMonth = async (userId: string, year: number, month: number): Promise<LeaveRequestData[]> => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(mockLeaveRequests);
+      }, 500);
+    });
   };
 
-  // 獲取劃假數據
-  const fetchLeaveRequests = async (userId?: string, startDate?: string, endDate?: string) => {
-    try {
-      if (userId) {
-        const data = await leaveRequestService.getLeaveRequestsByUser(userId, startDate, endDate);
-        setLeaveRequests(data);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '獲取劃假數據失敗');
-    }
+  const requestLeave = async (date: Date, reason?: string): Promise<LeaveRequestData> => {
+    return new Promise((resolve) => {
+      const newRequest: LeaveRequestData = {
+        id: Date.now().toString(),
+        user_id: userId || 'mock-user-id',
+        date: date.toISOString().split('T')[0],
+        reason: reason || '',
+        status: 'pending',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      
+      setLeaveRequests(prev => [...prev, newRequest]);
+      resolve(newRequest);
+    });
   };
 
-  // 獲取月份排班
-  const fetchSchedulesByMonth = async (staffId: string, year: number, month: number) => {
-    try {
-      const data = await scheduleService.getSchedulesByMonth(staffId, year, month);
-      setSchedules(data);
-      return data;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '獲取月份排班失敗');
-      return [];
-    }
+  const cancelLeave = async (leaveRequestId: string): Promise<void> => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        setLeaveRequests(prev => prev.filter(req => req.id !== leaveRequestId));
+        resolve();
+      }, 300);
+    });
   };
 
-  // 獲取月份劃假
-  const fetchLeaveRequestsByMonth = async (userId: string, year: number, month: number) => {
-    try {
-      const data = await leaveRequestService.getLeaveRequestsByMonth(userId, year, month);
-      setLeaveRequests(data);
-      return data;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '獲取月份劃假失敗');
-      return [];
-    }
-  };
-
-  // 切換劃假狀態
-  const toggleLeaveRequest = async (date: Date, reason?: string) => {
-    if (!userId) throw new Error('用戶ID未提供');
-    
-    const dateStr = date.toISOString().split('T')[0];
-    const existingRequest = leaveRequests.find((req: any) => req.date === dateStr);
-    
-    try {
-      if (existingRequest) {
-        // 取消劃假
-        await leaveRequestService.cancelLeaveRequest(existingRequest.id);
-        setLeaveRequests((prev: any) => prev.filter((req: any) => req.id !== existingRequest.id));
-        return { action: 'cancelled', request: existingRequest };
-      } else {
-        // 申請劃假
-        const newRequest = await leaveRequestService.createLeaveRequest({
-          user_id: userId,
-          date: dateStr,
-          reason: reason || undefined,
-          status: 'pending'
-        });
-        setLeaveRequests((prev: any) => [...prev, newRequest]);
-        return { action: 'created', request: newRequest };
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '劃假操作失敗');
-      throw err;
-    }
-  };
-
-  // 申請劃假
-  const requestLeave = async (date: Date, reason?: string) => {
-    if (!userId) throw new Error('用戶ID未提供');
-    
-    const dateStr = date.toISOString().split('T')[0];
-    
-    try {
-      const newRequest = await leaveRequestService.createLeaveRequest({
-        user_id: userId,
-        date: dateStr,
-        reason: reason || undefined,
-        status: 'pending'
-      });
-      setLeaveRequests((prev: any) => [...prev, newRequest]);
-      return newRequest;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '申請劃假失敗');
-      throw err;
-    }
-  };
-
-  // 取消劃假
-  const cancelLeave = async (leaveRequestId: string) => {
-    try {
-      await leaveRequestService.cancelLeaveRequest(leaveRequestId);
-      setLeaveRequests((prev: any) => prev.filter((req: any) => req.id !== leaveRequestId));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '取消劃假失敗');
-      throw err;
-    }
-  };
-
-  // 獲取統計數據
-  const getStats = async (staffId?: string) => {
-    try {
-      if (staffId) {
-        const currentYear = new Date().getFullYear();
-        const currentMonth = new Date().getMonth() + 1;
-        return await statsService.getScheduleStats(staffId, currentYear, currentMonth);
-      }
-      return null;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '獲取統計數據失敗');
-      return null;
-    }
-  };
-
-  // 初始化數據
+  // 初始化
   useEffect(() => {
     const initializeData = async () => {
       setLoading(true);
       setError(null);
       
       try {
-        await fetchStaff();
-        
-        if (userId) {
-          await fetchSchedules(userId);
-          await fetchLeaveRequests(userId);
-        }
+        // 使用模擬資料
+        setSchedules(mockSchedules);
+        setLeaveRequests(mockLeaveRequests);
       } catch (err) {
-        setError(err instanceof Error ? err.message : '初始化數據失敗');
+        setError('初始化數據失敗');
       } finally {
         setLoading(false);
       }
@@ -175,111 +119,15 @@ export const useSupabase = (userId?: string) => {
     initializeData();
   }, [userId]);
 
-  // 設置即時監聽
-  useEffect(() => {
-    // 訂閱員工變更
-    const staffSubscription = realtimeService.subscribeToStaff((payload: any) => {
-      console.log('Staff change:', payload);
-      fetchStaff();
-    });
-
-    // 訂閱排班變更
-    const schedulesSubscription = realtimeService.subscribeToSchedules((payload: any) => {
-      console.log('Schedule change:', payload);
-      if (userId) {
-        fetchSchedules(userId);
-      }
-    });
-
-    // 訂閱劃假變更
-    const leaveRequestsSubscription = realtimeService.subscribeToLeaveRequests((payload: any) => {
-      console.log('Leave request change:', payload);
-      if (userId) {
-        fetchLeaveRequests(userId);
-      }
-    });
-
-    // 清理訂閱
-    return () => {
-      staffSubscription.unsubscribe();
-      schedulesSubscription.unsubscribe();
-      leaveRequestsSubscription.unsubscribe();
-    };
-  }, [userId]);
-
   return {
-    // 數據
-    staff,
     schedules,
     leaveRequests,
     loading,
     error,
-    
-    // 方法
-    fetchStaff,
-    fetchSchedules,
-    fetchLeaveRequests,
     fetchSchedulesByMonth,
     fetchLeaveRequestsByMonth,
-    toggleLeaveRequest,
     requestLeave,
     cancelLeave,
-    getStats,
-    
-    // 工具方法
-    refetch: async () => {
-      setLoading(true);
-      setError(null);
-      
-      try {
-        await fetchStaff();
-        if (userId) {
-          await fetchSchedules(userId);
-          await fetchLeaveRequests(userId);
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : '重新獲取數據失敗');
-      } finally {
-        setLoading(false);
-      }
-    },
-    
     clearError: () => setError(null)
   };
 };
-
-  // 獲取劃假數據
-  const fetchLeaveRequests = async (userId?: string, startDate?: string, endDate?: string) => {
-    try {
-      if (userId) {
-        const data = await leaveRequestService.getLeaveRequestsByUser(userId, startDate, endDate);
-        setLeaveRequests(data);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '獲取劃假數據失敗');
-    }
-  };
-
-  // 獲取月份排班
-  const fetchSchedulesByMonth = async (staffId: string, year: number, month: number) => {
-    try {
-      const data = await scheduleService.getSchedulesByMonth(staffId, year, month);
-      setSchedules(data);
-      return data;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '獲取月份排班失敗');
-      return [];
-    }
-  };
-
-  // 獲取月份劃假
-  const fetchLeaveRequestsByMonth = async (userId: string, year: number, month: number) => {
-    try {
-      const data = await leaveRequestService.getLeaveRequestsByMonth(userId, year, month);
-      setLeaveRequests(data);
-      return data;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '獲取月份劃假失敗');
-      return [];
-    }
-  };
