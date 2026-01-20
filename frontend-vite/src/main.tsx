@@ -2,9 +2,12 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
+import { LiffProvider } from './context/LiffContext'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <LiffProvider>
+      <App />
+    </LiffProvider>
   </StrictMode>,
 )

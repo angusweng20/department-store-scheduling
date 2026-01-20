@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLiff } from '../context/LiffContext';
 
 interface ScheduleData {
   date: string;
@@ -19,7 +20,9 @@ interface LeaveRequestData {
   updated_at: string;
 }
 
-export const useSupabase = (userId?: string) => {
+export const useSupabase = () => {
+  const { profile } = useLiff();
+  const userId = profile?.userId || 'mock-user-id';
   const [schedules, setSchedules] = useState<ScheduleData[]>([]);
   const [leaveRequests, setLeaveRequests] = useState<LeaveRequestData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -58,6 +61,7 @@ export const useSupabase = (userId?: string) => {
 
   // 模擬 API 調用
   const fetchSchedulesByMonth = async (staffId: string, year: number, month: number): Promise<ScheduleData[]> => {
+    console.log(`Fetching schedules for ${staffId} in ${year}-${month}`);
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve(mockSchedules);
@@ -66,6 +70,7 @@ export const useSupabase = (userId?: string) => {
   };
 
   const fetchLeaveRequestsByMonth = async (userId: string, year: number, month: number): Promise<LeaveRequestData[]> => {
+    console.log(`Fetching leave requests for ${userId} in ${year}-${month}`);
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve(mockLeaveRequests);

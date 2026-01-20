@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Calendar from './Calendar';
 import ShiftDetailCard from './ShiftDetailCard';
 import { useSupabase } from '../hooks/useSupabase';
+import { useLiff } from '../context/LiffContext';
 
 interface ScheduleData {
   date: string;
@@ -41,7 +42,7 @@ const MySchedulePage: React.FC = () => {
     fetchLeaveRequestsByMonth,
     requestLeave,
     cancelLeave
-  } = useSupabase(mockUserId);
+  } = useSupabase();
   
   // 模擬資料 (當 Supabase 還沒有資料時使用)
   const mockSchedules: ScheduleData[] = [
