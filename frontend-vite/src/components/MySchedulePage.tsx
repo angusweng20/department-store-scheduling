@@ -1,172 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import Calendar from './Calendar';
-import ShiftDetailCard from './ShiftDetailCard';
-import { useSupabase } from '../hooks/useSupabase';
+import React, { useState } from 'react';
+import CalendarNew from './CalendarNew';
+import { useSchedule } from '../hooks/useSchedule';
 import { useLiff } from '../context/LiffContext';
 
-interface ScheduleData {
-  date: string;
-  type: 'early' | 'late' | 'full';
-  startTime: string;
-  endTime: string;
-  shiftName: string;
-  colleagues?: string[];
-}
-
-interface LeaveRequestData {
-  id: string;
-  user_id: string;
-  date: string;
-  reason?: string;
-  status: 'pending' | 'approved' | 'rejected';
-  created_at: string;
-  updated_at: string;
-}
-
 const MySchedulePage: React.FC = () => {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedSchedule, setSelectedSchedule] = useState<ScheduleData | undefined>();
-  const [selectedLeaveRequest, setSelectedLeaveRequest] = useState<LeaveRequestData | undefined>();
-  const [showDetailCard, setShowDetailCard] = useState(false);
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const { profile } = useLiff();
   
-  // 模擬用戶ID (實際應用中應該從認證系統獲取)
-  const mockUserId = 'mock-user-id';
-  
-  // 使用 Supabase Hook
+  // 使用新的 useSchedule Hook
   const { 
-    schedules, 
-    leaveRequests, 
+    shifts, 
+    requests, 
     loading, 
     error,
-    fetchSchedulesByMonth,
-    fetchLeaveRequestsByMonth,
-    requestLeave,
-    cancelLeave
-  } = useSupabase();
-  
-  // 模擬資料 (當 Supabase 還沒有資料時使用)
-  const mockSchedules: ScheduleData[] = [
-    { date: '2026-01-05', type: 'early', startTime: '08:00', endTime: '16:00', shiftName: '早班A', colleagues: ['王小美', '李小明'] },
-    { date: '2026-01-06', type: 'late', startTime: '16:00', endTime: '00:00', shiftName: '晚班B', colleagues: ['張小華'] },
-    { date: '2026-01-07', type: 'full', startTime: '08:00', endTime: '20:00', shiftName: '全班C', colleagues: ['陳小芳', '劉小強'] },
-    { date: '2026-01-12', type: 'early', startTime: '08:00', endTime: '16:00', shiftName: '早班A', colleagues: [] },
-    { date: '2026-01-15', type: 'late', startTime: '16:00', endTime: '00:00', shiftName: '晚班B', colleagues: ['黃小美'] },
-    { date: '2026-01-20', type: 'full', startTime: '08:00', endTime: '20:00', shiftName: '全班C', colleagues: ['林小華', '吳小明'] },
-  ];
-  
-  const mockLeaveRequests: LeaveRequestData[] = [
-    { 
-      id: '1', 
-      user_id: mockUserId, 
-      date: '2026-01-10', 
-      reason: '家裡有事', 
-      status: 'pending', 
-      created_at: '2026-01-01T00:00:00Z', 
-      updated_at: '2026-01-01T00:00:00Z' 
-    },
-    { 
-      id: '2', 
-      user_id: mockUserId, 
-      date: '2026-01-25', 
-      reason: '身體不適', 
-      status: 'approved', 
-      created_at: '2026-01-01T00:00:00Z', 
-      updated_at: '2026-01-01T00:00:00Z' 
-    }
-  ];
-  
-  // 獲取當前月份的數據
-  useEffect(() => {
-    const year = new Date().getFullYear();
-    const month = new Date().getMonth() + 1;
-    
-    // 當 Supabase 設置完成時，使用真實數據
-    if (import.meta.env.VITE_SUPABASE_URL) {
-      fetchSchedulesByMonth(mockUserId, year, month);
-      fetchLeaveRequestsByMonth(mockUserId, year, month);
-    }
-  }, [fetchSchedulesByMonth, fetchLeaveRequestsByMonth]);
-  
-  // 轉換 Supabase 數據格式為組件所需格式
-  const convertSchedules = (supabaseSchedules: any[]): ScheduleData[] => {
-    return supabaseSchedules.map(schedule => ({
-      date: schedule.shift_date,
-      type: schedule.shift_type,
-      startTime: schedule.start_time,
-      endTime: schedule.end_time,
-      shiftName: schedule.shift_name,
-      colleagues: [] // 可以根據需要添加同事資訊
-    }));
-  };
-  
-  // 轉換 Supabase 劃假數據格式
-  const convertLeaveRequests = (supabaseLeaveRequests: any[]): LeaveRequestData[] => {
-    return supabaseLeaveRequests.map(request => ({
-      id: request.id,
-      user_id: request.user_id,
-      date: request.date,
-      reason: request.reason,
-      status: request.status,
-      created_at: request.created_at,
-      updated_at: request.updated_at
-    }));
-  };
-  
-  // 使用真實數據或模擬數據
-  const displaySchedules = schedules.length > 0 ? convertSchedules(schedules) : mockSchedules;
-  const displayLeaveRequests = leaveRequests.length > 0 ? convertLeaveRequests(leaveRequests) : mockLeaveRequests;
-  
-  const handleDateClick = (date: Date, schedule?: ScheduleData, leaveRequest?: LeaveRequestData) => {
-    setSelectedDate(date);
-    setSelectedSchedule(schedule);
-    setSelectedLeaveRequest(leaveRequest);
-    setShowDetailCard(true);
-  };
-  
-  const handleCloseDetail = () => {
-    setShowDetailCard(false);
-    setSelectedDate(null);
-    setSelectedSchedule(undefined);
-    setSelectedLeaveRequest(undefined);
-  };
-  
-  const handleRequestLeave = async (date: Date, reason?: string) => {
-    try {
-      await requestLeave(date, reason);
-      // 重新獲取當前月份的劃假數據
-      const year = new Date().getFullYear();
-      const month = new Date().getMonth() + 1;
-      await fetchLeaveRequestsByMonth(mockUserId, year, month);
-    } catch (error) {
-      console.error('申請劃假失敗:', error);
-      throw error;
-    }
-  };
-  
-  const handleCancelLeave = async (leaveRequestId: string) => {
-    try {
-      await cancelLeave(leaveRequestId);
-      // 重新獲取當前月份的劃假數據
-      const year = new Date().getFullYear();
-      const month = new Date().getMonth() + 1;
-      await fetchLeaveRequestsByMonth(mockUserId, year, month);
-    } catch (error) {
-      console.error('取消劃假失敗:', error);
-      throw error;
-    }
-  };
-  
+    toggleLeaveRequest,
+    refetch
+  } = useSchedule(currentMonth);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600">載入中...</p>
         </div>
       </div>
     );
   }
-  
+
   if (error) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -176,68 +37,48 @@ const MySchedulePage: React.FC = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <p className="text-red-600 mb-2">載入失敗</p>
-          <p className="text-sm text-gray-500">{error}</p>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">載入失敗</h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={refetch}
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            重新載入
+          </button>
         </div>
       </div>
     );
   }
-  
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-md mx-auto p-4">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">我的班表</h1>
-        
-        <Calendar 
-          schedules={displaySchedules} 
-          leaveRequests={displayLeaveRequests}
-          onDateClick={handleDateClick}
-        />
-        
-        {/* 圖例說明 */}
-        <div className="mt-6 bg-white rounded-lg shadow-md p-4">
-          <h3 className="text-sm font-medium text-gray-700 mb-3">班次圖例</h3>
-          <div className="flex justify-around mb-3">
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
-              <span className="text-sm text-gray-600">早班</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-              <span className="text-sm text-gray-600">晚班</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-              <span className="text-sm text-gray-600">全班</span>
-            </div>
-          </div>
-          
-          <div className="border-t border-gray-200 pt-3">
-            <h3 className="text-sm font-medium text-gray-700 mb-3">劃假狀態</h3>
-            <div className="flex justify-around">
-              <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 bg-gray-400 rounded flex items-center justify-center">
-                  <span className="text-xs text-white">🚫</span>
-                </div>
-                <span className="text-sm text-gray-600">劃假</span>
-              </div>
-            </div>
-          </div>
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-4xl mx-auto px-4">
+        {/* 頁面標題 */}
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            我的班表
+          </h1>
+          <p className="text-gray-600">
+            歡迎回來，{profile?.displayName || '測試用戶'}！
+          </p>
         </div>
-        
-        {/* 統計資訊 */}
-        <div className="mt-4 bg-white rounded-lg shadow-md p-4">
-          <h3 className="text-sm font-medium text-gray-700 mb-3">本月統計</h3>
-          <div className="grid grid-cols-2 gap-4 text-center">
-            <div>
-              <p className="text-2xl font-bold text-blue-600">{displaySchedules.length}</p>
-              <p className="text-sm text-gray-600">排班天數</p>
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-orange-600">{displayLeaveRequests.length}</p>
-              <p className="text-sm text-gray-600">劃假天數</p>
-            </div>
-          </div>
+
+        {/* 月曆 */}
+        <CalendarNew
+          shifts={shifts}
+          requests={requests}
+          toggleLeaveRequest={toggleLeaveRequest}
+        />
+
+        {/* 操作提示 */}
+        <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <h3 className="text-sm font-medium text-blue-900 mb-2">操作提示</h3>
+          <ul className="text-sm text-blue-700 space-y-1">
+            <li>• 點擊未來日期可以申請劃假</li>
+            <li>• 再次點擊已劃假日期可以取消申請</li>
+            <li>• 彩色圓點表示您的班次</li>
+            <li>• 🚫 圖示表示已申請劃假</li>
+          </ul>
         </div>
       </div>
       

@@ -1,33 +1,35 @@
 import React, { useState } from 'react';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay, isSameMonth, isSameDay, addMonths, subMonths } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay, isSameMonth, isSameDay, addMonths, subMonths, isFuture } from 'date-fns';
 import { zhTW } from 'date-fns/locale';
 
-interface ScheduleData {
-  date: string;
-  type: 'early' | 'late' | 'full';
-  startTime: string;
-  endTime: string;
-  shiftName: string;
-  colleagues?: string[];
-}
-
-interface LeaveRequestData {
+interface Shift {
   id: string;
   user_id: string;
   date: string;
-  reason?: string;
+  shift_type: 'morning' | 'evening' | 'full';
+  is_published: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+interface LeaveRequest {
+  id: string;
+  user_id: string;
+  date: string;
   status: 'pending' | 'approved' | 'rejected';
+  reason?: string;
   created_at: string;
   updated_at: string;
 }
 
 interface CalendarProps {
-  schedules: ScheduleData[];
-  leaveRequests: LeaveRequestData[];
-  onDateClick: (date: Date, schedule?: ScheduleData, leaveRequest?: LeaveRequestData) => void;
+  shifts: Shift[];
+  requests: LeaveRequest[];
+  onDateClick: (date: Date) => void;
+  toggleLeaveRequest: (date: Date) => Promise<void>;
 }
 
-const Calendar: React.FC<CalendarProps> = ({ schedules, leaveRequests, onDateClick }) => {
+const Calendar: React.FC<CalendarProps> = ({ shifts, requests, onDateClick, toggleLeaveRequest }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   
   const monthStart = startOfMonth(currentMonth);
@@ -39,15 +41,16 @@ const Calendar: React.FC<CalendarProps> = ({ schedules, leaveRequests, onDateCli
   const emptyDays = Array(startDayOfWeek).fill(null);
   
   // 獲取指定日期的班表
-  const getScheduleForDate = (date: Date): ScheduleData | undefined => {
+  const getShiftForDate = (date: Date): Shift | undefined => {
     const dateStr = format(date, 'yyyy-MM-dd');
-    return schedules.find(schedule => schedule.date === dateStr);
+    return shifts.find(shift => shift.date === dateStr);
   };
   
   // 獲取指定日期的劃假
-  const getLeaveRequestForDate = (date: Date): LeaveRequestData | undefined => {
+  const getLeaveRequestForDate = (date: Date): LeaveRequest | undefined => {
     const dateStr = format(date, 'yyyy-MM-dd');
-    return leaveRequests.find(request => request.date === dateStr);
+    return requests.find(request => request.date === dateStr);
+  };
   };
   
   // 獲取班次顏色
