@@ -57,8 +57,8 @@ export const LiffProvider: React.FC<LiffProviderProps> = ({ children }) => {
       const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
       const isInLineApp = liff.isInClient();
 
-      if (isLocalhost && !isInLineApp) {
-        // Local development fallback
+      // Local development fallback - always use mock profile
+      if (isLocalhost) {
         console.log('🔧 Local development mode - using mock profile');
         setLiffObject({ mock: true });
         setIsLoggedIn(true);
@@ -67,10 +67,15 @@ export const LiffProvider: React.FC<LiffProviderProps> = ({ children }) => {
         return;
       }
 
-      // Initialize LIFF
+      // Initialize LIFF for production
       const liffId = import.meta.env.VITE_LINE_LIFF_ID;
-      if (!liffId) {
-        throw new Error('VITE_LINE_LIFF_ID is not defined');
+      if (!liffId || liffId === 'temp-liff-id-for-development') {
+        console.log('⚠️ No valid LIFF ID provided, using mock profile');
+        setLiffObject({ mock: true });
+        setIsLoggedIn(true);
+        setProfile(mockProfile);
+        setIsLoading(false);
+        return;
       }
 
       await liff.init({ liffId });
@@ -92,7 +97,7 @@ export const LiffProvider: React.FC<LiffProviderProps> = ({ children }) => {
       console.error('❌ LIFF initialization failed:', err);
       setError(err instanceof Error ? err.message : 'LIFF initialization failed');
       
-      // Fallback to mock profile for development
+      // Fallback to mock profile for any error in development
       if (window.location.hostname === 'localhost') {
         console.log('🔧 Falling back to mock profile due to error');
         setLiffObject({ mock: true });
