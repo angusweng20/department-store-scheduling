@@ -42,6 +42,10 @@ const ProfilePage: React.FC = () => {
             <div><strong>Display Name:</strong> {profile?.displayName || 'N/A'}</div>
             <div><strong>Picture URL:</strong> {profile?.pictureUrl || 'N/A'}</div>
             <div><strong>Status Message:</strong> {profile?.statusMessage || 'N/A'}</div>
+            <div><strong>Current URL:</strong> {window.location.href}</div>
+            <div><strong>User Agent:</strong> {navigator.userAgent.substring(0, 100)}...</div>
+            <div><strong>Environment:</strong> {import.meta.env.MODE}</div>
+            <div><strong>LIFF ID:</strong> {import.meta.env.VITE_LINE_LIFF_ID || 'N/A'}</div>
           </div>
         </div>
 
