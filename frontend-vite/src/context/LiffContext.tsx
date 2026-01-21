@@ -55,9 +55,16 @@ export const LiffProvider: React.FC<LiffProviderProps> = ({ children }) => {
 
       // Check if we're in LINE environment
       const isInLineApp = liff.isInClient();
+      console.log('🔍 LIFF Environment Check:', { 
+        isInLineApp, 
+        hostname: window.location.hostname,
+        userAgent: navigator.userAgent
+      });
 
-      // Initialize LIFF for production (even on localhost for testing)
+      // Initialize LIFF for production
       const liffId = import.meta.env.VITE_LINE_LIFF_ID;
+      console.log('🔍 LIFF ID Check:', { liffId });
+      
       if (!liffId || liffId === 'temp-liff-id-for-development') {
         console.log('⚠️ No valid LIFF ID provided, using mock profile');
         setLiffObject({ mock: true });
@@ -67,6 +74,7 @@ export const LiffProvider: React.FC<LiffProviderProps> = ({ children }) => {
         return;
       }
 
+      console.log('🚀 Initializing LIFF with ID:', liffId);
       await liff.init({ liffId });
       setLiffObject(liff);
 
@@ -86,11 +94,13 @@ export const LiffProvider: React.FC<LiffProviderProps> = ({ children }) => {
       console.error('❌ LIFF initialization failed:', err);
       setError(err instanceof Error ? err.message : 'LIFF initialization failed');
       
-      // Fallback to mock profile for development
-      console.log('🔧 Falling back to mock profile due to error');
-      setLiffObject({ mock: true });
-      setIsLoggedIn(true);
-      setProfile(mockProfile);
+      // Only fallback to mock if not in LINE app
+      if (!liff.isInClient()) {
+        console.log('🔧 Not in LINE app, falling back to mock profile');
+        setLiffObject({ mock: true });
+        setIsLoggedIn(true);
+        setProfile(mockProfile);
+      }
     } finally {
       setIsLoading(false);
     }

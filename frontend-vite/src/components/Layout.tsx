@@ -80,18 +80,6 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 </svg>
               </button>
             </div>
-            {/* Desktop User Menu */}
-            <div className="hidden md:flex items-center space-x-4">
-              <button className="text-gray-500 hover:text-gray-700">
-                🔔
-              </button>
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                  A
-                </div>
-                <span className="hidden sm:block text-sm font-medium text-gray-700">管理員</span>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -154,15 +142,30 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               >
                 員工管理
               </Link>
+              <Link 
+                to="/profile" 
+                className={`block px-3 py-2 text-sm font-medium transition-colors ${
+                  isActive('/profile') 
+                    ? 'text-blue-600 bg-blue-50' 
+                    : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+                }`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                個人資料
+              </Link>
               
               {/* Mobile User Menu */}
               <div className="pt-2 border-t border-gray-200 mt-2">
-                <div className="flex items-center space-x-2 px-3 py-2">
-                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                    A
+                {profile && (
+                  <div className="flex items-center space-x-2 px-3 py-2">
+                    <img
+                      src={profile.pictureUrl || 'https://via.placeholder.com/32'}
+                      alt={profile.displayName}
+                      className="w-8 h-8 rounded-full"
+                    />
+                    <span className="text-sm font-medium text-gray-700">{profile.displayName}</span>
                   </div>
-                  <span className="text-sm font-medium text-gray-700">管理員</span>
-                </div>
+                )}
               </div>
             </div>
           </div>
