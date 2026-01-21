@@ -61,7 +61,7 @@ export const LiffProvider: React.FC<LiffProviderProps> = ({ children }) => {
         userAgent: navigator.userAgent
       });
 
-      // Initialize LIFF for production
+      // Initialize LIFF for production - ALWAYS try real LIFF first
       const liffId = import.meta.env.VITE_LINE_LIFF_ID;
       console.log('🔍 LIFF ID Check:', { liffId });
       
@@ -75,32 +75,42 @@ export const LiffProvider: React.FC<LiffProviderProps> = ({ children }) => {
       }
 
       console.log('🚀 Initializing LIFF with ID:', liffId);
-      await liff.init({ liffId });
-      setLiffObject(liff);
+      
+      try {
+        await liff.init({ liffId });
+        setLiffObject(liff);
+        console.log('✅ LIFF initialized successfully');
 
-      // Check login status
-      if (liff.isLoggedIn()) {
-        // User is logged in, get profile
-        const userProfile = await liff.getProfile();
-        setProfile(userProfile);
-        setIsLoggedIn(true);
-        console.log('✅ LIFF initialized and user logged in:', userProfile);
-      } else {
-        // User is not logged in, show login prompt
-        console.log('🔐 User not logged in, prompting login...');
-        setIsLoggedIn(false);
+        // Check login status
+        if (liff.isLoggedIn()) {
+          // User is logged in, get profile
+          const userProfile = await liff.getProfile();
+          setProfile(userProfile);
+          setIsLoggedIn(true);
+          console.log('✅ LIFF initialized and user logged in:', userProfile);
+        } else {
+          // User is not logged in, show login prompt
+          console.log('🔐 User not logged in, prompting login...');
+          setIsLoggedIn(false);
+        }
+      } catch (liffError) {
+        console.error('❌ LIFF initialization error:', liffError);
+        
+        // Only fallback to mock if we're absolutely sure we're not in LINE
+        if (!isInLineApp && window.location.hostname !== 'localhost') {
+          console.log('🔧 Not in LINE app and not localhost, falling back to mock profile');
+          setLiffObject({ mock: true });
+          setIsLoggedIn(true);
+          setProfile(mockProfile);
+        } else {
+          // In LINE app or localhost, show error instead of fallback
+          console.log('🚫 In LINE app, showing error instead of fallback');
+          setError(`LIFF 初始化失敗: ${liffError instanceof Error ? liffError.message : '未知錯誤'}`);
+        }
       }
     } catch (err) {
-      console.error('❌ LIFF initialization failed:', err);
+      console.error('❌ General initialization failed:', err);
       setError(err instanceof Error ? err.message : 'LIFF initialization failed');
-      
-      // Only fallback to mock if not in LINE app
-      if (!liff.isInClient()) {
-        console.log('🔧 Not in LINE app, falling back to mock profile');
-        setLiffObject({ mock: true });
-        setIsLoggedIn(true);
-        setProfile(mockProfile);
-      }
     } finally {
       setIsLoading(false);
     }
