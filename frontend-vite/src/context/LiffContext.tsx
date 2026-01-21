@@ -118,20 +118,41 @@ export const LiffProvider: React.FC<LiffProviderProps> = ({ children }) => {
 
   const login = async () => {
     try {
+      console.log('🔐 Starting login process...');
+      
       if (liffObject && liffObject.mock) {
         // Mock login for local development
+        console.log('🔧 Using mock login');
         setIsLoggedIn(true);
         setProfile(mockProfile);
         return;
       }
 
       if (liffObject && !liffObject.mock) {
-        await liff.login();
-        // After login, get profile
-        const userProfile = await liff.getProfile();
-        setProfile(userProfile);
-        setIsLoggedIn(true);
-        console.log('✅ User logged in:', userProfile);
+        console.log('🚀 Using real LIFF login');
+        
+        // Check if already logged in
+        if (liff.isLoggedIn()) {
+          console.log('✅ User already logged in, getting profile...');
+          const userProfile = await liff.getProfile();
+          setProfile(userProfile);
+          setIsLoggedIn(true);
+          console.log('✅ User profile loaded:', userProfile);
+        } else {
+          console.log('🔐 User not logged in, starting LIFF login...');
+          await liff.login();
+          
+          // After login, get profile
+          console.log('🔄 Getting user profile after login...');
+          const userProfile = await liff.getProfile();
+          setProfile(userProfile);
+          setIsLoggedIn(true);
+          console.log('✅ User logged in successfully:', userProfile);
+        }
+      } else {
+        console.log('❌ No LIFF object available, reinitializing...');
+        // Reinitialize LIFF if no object available
+        await initializeLiff();
       }
     } catch (err) {
       console.error('❌ Login failed:', err);
@@ -141,12 +162,19 @@ export const LiffProvider: React.FC<LiffProviderProps> = ({ children }) => {
 
   const logout = async () => {
     try {
+      console.log('🚪 Starting logout process...');
+      
       if (liffObject && !liffObject.mock) {
+        console.log('🚪 Logging out from LIFF...');
         await liff.logout();
+        console.log('✅ LIFF logout successful');
       }
+      
+      // Reset all states
       setIsLoggedIn(false);
       setProfile(null);
-      console.log('✅ User logged out');
+      setError(null);
+      console.log('✅ User logged out and states reset');
     } catch (err) {
       console.error('❌ Logout failed:', err);
       setError(err instanceof Error ? err.message : 'Logout failed');
