@@ -58,7 +58,8 @@ export const LiffProvider: React.FC<LiffProviderProps> = ({ children }) => {
       console.log('🔍 LIFF Environment Check:', { 
         isInLineApp, 
         hostname: window.location.hostname,
-        userAgent: navigator.userAgent
+        userAgent: navigator.userAgent,
+        url: window.location.href
       });
 
       // Initialize LIFF for production - ALWAYS try real LIFF first
@@ -95,18 +96,15 @@ export const LiffProvider: React.FC<LiffProviderProps> = ({ children }) => {
         }
       } catch (liffError) {
         console.error('❌ LIFF initialization error:', liffError);
+        const errorMessage = liffError instanceof Error ? liffError.message : String(liffError);
+        console.error('❌ Error details:', {
+          message: errorMessage,
+          error: liffError
+        });
         
-        // Only fallback to mock if we're absolutely sure we're not in LINE
-        if (!isInLineApp && window.location.hostname !== 'localhost') {
-          console.log('🔧 Not in LINE app and not localhost, falling back to mock profile');
-          setLiffObject({ mock: true });
-          setIsLoggedIn(true);
-          setProfile(mockProfile);
-        } else {
-          // In LINE app or localhost, show error instead of fallback
-          console.log('🚫 In LINE app, showing error instead of fallback');
-          setError(`LIFF 初始化失敗: ${liffError instanceof Error ? liffError.message : '未知錯誤'}`);
-        }
+        // NEVER fallback to mock in LINE app - always show error
+        console.log('🚫 In LINE app, showing error instead of fallback');
+        setError(`LIFF 初始化失敗: ${errorMessage}。請檢查 LIFF ID: ${liffId}`);
       }
     } catch (err) {
       console.error('❌ General initialization failed:', err);
