@@ -5,6 +5,7 @@ import SchedulesPage from './components/SchedulesPage';
 import LeaveRequestsPage from './components/LeaveRequestsPage';
 import StaffPage from './components/StaffPage';
 import MyScheduleTestPage from './components/MyScheduleTestPage';
+import ProfilePage from './components/ProfilePage';
 import LiffLoading from './components/LiffLoading';
 import { useLiff } from './context/LiffContext';
 
@@ -75,6 +76,7 @@ function App() {
           <Route path="/leave-requests" element={<LeaveRequestsPage />} />
           <Route path="/staff" element={<StaffPage />} />
           <Route path="/my-schedule" element={<MyScheduleTestPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Routes>
       </Layout>
     </Router>

@@ -15,6 +15,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     { path: '/leave-requests', label: '請假申請', icon: '📝' },
     { path: '/staff', label: '員工管理', icon: '👥' },
     { path: '/my-schedule', label: '我的班表', icon: '👤' },
+    { path: '/profile', label: '個人資料', icon: '👤' },
   ];
 
   return (
