@@ -3,6 +3,7 @@ import { useLiff } from '../context/LiffContext';
 
 const ProfilePage: React.FC = () => {
   const { profile, logout, isLoggedIn, liffObject } = useLiff();
+  const [imageError, setImageError] = React.useState(false);
 
   if (!isLoggedIn) {
     return (
@@ -54,14 +55,14 @@ const ProfilePage: React.FC = () => {
           <div className="flex items-center space-x-6 mb-6">
             {/* 頭像 */}
             <div className="flex-shrink-0">
-              {profile?.pictureUrl ? (
+              {profile?.pictureUrl && !imageError ? (
                 <img
                   src={profile.pictureUrl}
                   alt={profile.displayName}
                   className="w-24 h-24 rounded-full object-cover border-4 border-gray-200"
-                  onError={(e) => {
+                  onError={() => {
                     console.error('❌ 圖片載入失敗:', profile.pictureUrl);
-                    e.currentTarget.src = 'https://via.placeholder.com/150';
+                    setImageError(true);
                   }}
                 />
               ) : (
