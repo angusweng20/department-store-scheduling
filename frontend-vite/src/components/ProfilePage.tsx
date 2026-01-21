@@ -2,7 +2,7 @@ import React from 'react';
 import { useLiff } from '../context/LiffContext';
 
 const ProfilePage: React.FC = () => {
-  const { profile, logout, isLoggedIn } = useLiff();
+  const { profile, logout, isLoggedIn, liffObject } = useLiff();
 
   if (!isLoggedIn) {
     return (
@@ -33,16 +33,40 @@ const ProfilePage: React.FC = () => {
           </p>
         </div>
 
+        {/* 除錯資訊 */}
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+          <h3 className="text-sm font-medium text-yellow-900 mb-2">除錯資訊</h3>
+          <div className="text-xs text-yellow-700 space-y-1">
+            <div><strong>LIFF Object:</strong> {liffObject?.mock ? 'Mock Mode' : 'Real LIFF'}</div>
+            <div><strong>User ID:</strong> {profile?.userId || 'N/A'}</div>
+            <div><strong>Display Name:</strong> {profile?.displayName || 'N/A'}</div>
+            <div><strong>Picture URL:</strong> {profile?.pictureUrl || 'N/A'}</div>
+            <div><strong>Status Message:</strong> {profile?.statusMessage || 'N/A'}</div>
+          </div>
+        </div>
+
         {/* 個人資訊卡片 */}
         <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
           <div className="flex items-center space-x-6 mb-6">
             {/* 頭像 */}
             <div className="flex-shrink-0">
-              <img
-                src={profile?.pictureUrl || 'https://via.placeholder.com/150'}
-                alt={profile?.displayName || '用戶'}
-                className="w-24 h-24 rounded-full object-cover border-4 border-gray-200"
-              />
+              {profile?.pictureUrl ? (
+                <img
+                  src={profile.pictureUrl}
+                  alt={profile.displayName}
+                  className="w-24 h-24 rounded-full object-cover border-4 border-gray-200"
+                  onError={(e) => {
+                    console.error('❌ 圖片載入失敗:', profile.pictureUrl);
+                    e.currentTarget.src = 'https://via.placeholder.com/150';
+                  }}
+                />
+              ) : (
+                <div className="w-24 h-24 rounded-full bg-gray-200 border-4 border-gray-200 flex items-center justify-center">
+                  <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </div>
+              )}
             </div>
             
             {/* 基本資訊 */}
@@ -86,6 +110,12 @@ const ProfilePage: React.FC = () => {
                     <span className="text-gray-900">{profile?.displayName || 'N/A'}</span>
                   </div>
                 </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">頭像 URL</label>
+                  <div className="bg-gray-50 px-3 py-2 rounded border border-gray-200">
+                    <code className="text-xs text-gray-600 break-all">{profile?.pictureUrl || 'N/A'}</code>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -96,6 +126,14 @@ const ProfilePage: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">登入狀態</label>
                   <div className="bg-green-50 px-3 py-2 rounded border border-green-200">
                     <span className="text-green-700">已登入</span>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">LIFF 模式</label>
+                  <div className={`${liffObject?.mock ? 'bg-yellow-50 border-yellow-200' : 'bg-green-50 border-green-200'} px-3 py-2 rounded border`}>
+                    <span className={`${liffObject?.mock ? 'text-yellow-700' : 'text-green-700'}`}>
+                      {liffObject?.mock ? 'Mock Mode' : 'Real LIFF'}
+                    </span>
                   </div>
                 </div>
                 <div>
@@ -124,6 +162,19 @@ const ProfilePage: React.FC = () => {
             </button>
             
             <button
+              onClick={() => {
+                console.log('🔄 重新載入頁面...');
+                window.location.reload();
+              }}
+              className="flex-1 bg-yellow-600 text-white px-6 py-3 rounded-lg hover:bg-yellow-700 transition-colors flex items-center justify-center"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              重新載入
+            </button>
+            
+            <button
               onClick={logout}
               className="flex-1 bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center"
             >
@@ -143,6 +194,7 @@ const ProfilePage: React.FC = () => {
             <li>• 如需修改個人資訊，請在 LINE 應用程式中更新</li>
             <li>• 登出後需要重新透 LINE 驗證身份</li>
             <li>• 系統會自動同步您的最新資訊</li>
+            <li>• 如果頭像顯示不正確，請點擊「重新載入」按鈕</li>
           </ul>
         </div>
       </div>
