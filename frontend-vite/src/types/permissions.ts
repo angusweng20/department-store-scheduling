@@ -1,9 +1,11 @@
 // 權限等級定義
 export const UserRole = {
-  HQ_ADMIN: 'hq_admin',        // 公司管理
-  AREA_MANAGER: 'area_manager', // 地區經理
-  STORE_MANAGER: 'store_manager', // 專櫃櫃長
-  STAFF: 'staff'              // 專櫃人員
+  SYSTEM_ADMIN: 'system_admin',    // 班班系統營運團隊
+  HQ_ADMIN: 'hq_admin',            // 公司管理
+  AREA_MANAGER: 'area_manager',    // 地區經理
+  STORE_MANAGER: 'store_manager',  // 專櫃櫃長
+  STAFF: 'staff',                 // 專櫃人員
+  TESTER: 'tester'                // 測試人員
 } as const;
 
 export type UserRole = typeof UserRole[keyof typeof UserRole];
@@ -119,6 +121,8 @@ export interface WorkHourStats {
 // 權限檢查函數
 export const hasPermission = (userRole: UserRole, requiredRole: UserRole): boolean => {
   const roleHierarchy = {
+    [UserRole.SYSTEM_ADMIN]: 6,
+    [UserRole.TESTER]: 5,
     [UserRole.HQ_ADMIN]: 4,
     [UserRole.AREA_MANAGER]: 3,
     [UserRole.STORE_MANAGER]: 2,
@@ -130,6 +134,18 @@ export const hasPermission = (userRole: UserRole, requiredRole: UserRole): boole
 
 // 權限操作定義
 export const PERMISSIONS = {
+  // 系統管理員權限 (班班營運團隊)
+  SYSTEM_OVERVIEW: 'system_overview',
+  SYSTEM_SETTINGS: 'system_settings',
+  MANAGE_ALL_COMPANIES: 'manage_all_companies',
+  VIEW_ALL_DATA: 'view_all_data',
+  SYSTEM_DEBUG: 'system_debug',
+  
+  // 測試人員權限
+  SWITCH_ROLES: 'switch_roles',
+  TEST_ALL_FEATURES: 'test_all_features',
+  DEBUG_MODE: 'debug_mode',
+  
   // 公司管理權限
   MANAGE_STORES: 'manage_stores',
   MANAGE_AREAS: 'manage_areas',
@@ -153,6 +169,42 @@ export const PERMISSIONS = {
 
 // 角色權限映射
 export const ROLE_PERMISSIONS = {
+  [UserRole.SYSTEM_ADMIN]: [
+    PERMISSIONS.SYSTEM_OVERVIEW,
+    PERMISSIONS.SYSTEM_SETTINGS,
+    PERMISSIONS.MANAGE_ALL_COMPANIES,
+    PERMISSIONS.VIEW_ALL_DATA,
+    PERMISSIONS.SYSTEM_DEBUG,
+    PERMISSIONS.MANAGE_STORES,
+    PERMISSIONS.MANAGE_AREAS,
+    PERMISSIONS.SET_GLOBAL_RULES,
+    PERMISSIONS.ASSIGN_PERMISSIONS,
+    PERMISSIONS.VIEW_AREA_STATS,
+    PERMISSIONS.APPROVE_CROSS_STORE_LEAVE,
+    PERMISSIONS.MANAGE_STORE_SCHEDULE,
+    PERMISSIONS.APPROVE_STAFF_LEAVE,
+    PERMISSIONS.SET_STORE_ACTIVITIES,
+    PERMISSIONS.VIEW_OWN_SCHEDULE,
+    PERMISSIONS.REQUEST_LEAVE,
+    PERMISSIONS.VIEW_OWN_HOURS
+  ],
+  [UserRole.TESTER]: [
+    PERMISSIONS.SWITCH_ROLES,
+    PERMISSIONS.TEST_ALL_FEATURES,
+    PERMISSIONS.DEBUG_MODE,
+    PERMISSIONS.MANAGE_STORES,
+    PERMISSIONS.MANAGE_AREAS,
+    PERMISSIONS.SET_GLOBAL_RULES,
+    PERMISSIONS.ASSIGN_PERMISSIONS,
+    PERMISSIONS.VIEW_AREA_STATS,
+    PERMISSIONS.APPROVE_CROSS_STORE_LEAVE,
+    PERMISSIONS.MANAGE_STORE_SCHEDULE,
+    PERMISSIONS.APPROVE_STAFF_LEAVE,
+    PERMISSIONS.SET_STORE_ACTIVITIES,
+    PERMISSIONS.VIEW_OWN_SCHEDULE,
+    PERMISSIONS.REQUEST_LEAVE,
+    PERMISSIONS.VIEW_OWN_HOURS
+  ],
   [UserRole.HQ_ADMIN]: [
     PERMISSIONS.MANAGE_STORES,
     PERMISSIONS.MANAGE_AREAS,

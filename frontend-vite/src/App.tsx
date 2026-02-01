@@ -8,6 +8,8 @@ import MyScheduleTestPage from './components/MyScheduleTestPage';
 import ProfilePage from './components/ProfilePage';
 import CrossStoreSupportPage from './components/CrossStoreSupportPage';
 import WorkHoursReportPage from './components/WorkHoursReportPage';
+import SystemAdminPage from './components/SystemAdminPage';
+import RoleSwitcher from './components/RoleSwitcher';
 import LiffLoading from './components/LiffLoading';
 import { useLiff } from './context/LiffContext';
 import { PermissionProvider } from './context/PermissionContext';
@@ -82,8 +84,10 @@ function App() {
             <Route path="/my-schedule" element={<MyScheduleTestPage />} />
             <Route path="/cross-store-support" element={<CrossStoreSupportPage />} />
             <Route path="/work-hours-report" element={<WorkHoursReportPage />} />
+            <Route path="/system-admin" element={<SystemAdminPage />} />
             <Route path="/profile" element={<ProfilePage />} />
           </Routes>
+          <RoleSwitcher />
         </Layout>
       </Router>
     </PermissionProvider>

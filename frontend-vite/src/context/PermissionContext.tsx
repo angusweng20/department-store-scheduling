@@ -23,6 +23,28 @@ interface PermissionProviderProps {
 // Mock 資料 - 實際應用中應從 API 取得
 const mockUsers: User[] = [
   {
+    id: '0',
+    lineUserId: 'SYSTEM_ADMIN',
+    name: '班班營運團隊',
+    email: 'admin@banban.com',
+    phone: '0911111111',
+    role: UserRole.SYSTEM_ADMIN,
+    isActive: true,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
+    id: '5',
+    lineUserId: 'TESTER_USER',
+    name: '測試人員',
+    email: 'tester@banban.com',
+    phone: '0955555555',
+    role: UserRole.TESTER,
+    isActive: true,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
+  {
     id: '1',
     lineUserId: 'U1234567890',
     name: '總經理',
@@ -194,9 +216,9 @@ export const PermissionProvider: React.FC<PermissionProviderProps> = ({ children
   };
 
   useEffect(() => {
-    // 開發階段預設設定為專櫃人員
+    // 開發階段預設設定為測試人員
     // 實際應用中會從 LIFF Context 獲取用戶資訊
-    setCurrentUserForDevelopment('U4567890123'); // 專櫃人員
+    setCurrentUserForDevelopment('TESTER_USER'); // 測試人員
   }, []);
 
   const value: PermissionContextType = {
@@ -236,6 +258,8 @@ export const useDevUserSwitch = () => {
 
   const switchToRole = (role: UserRole) => {
     const userMap = {
+      [UserRole.SYSTEM_ADMIN]: 'SYSTEM_ADMIN',
+      [UserRole.TESTER]: 'TESTER_USER',
       [UserRole.HQ_ADMIN]: 'U1234567890',
       [UserRole.AREA_MANAGER]: 'U2345678901',
       [UserRole.STORE_MANAGER]: 'U3456789012',
@@ -245,6 +269,9 @@ export const useDevUserSwitch = () => {
     // 這裡需要一個內部方法來重新初始化用戶
     // 暫時使用 console.log 作為開發工具
     console.log(`🔄 切換到角色: ${role} (LINE ID: ${userMap[role]})`);
+    
+    // 實際切換用戶 - 需要重新載入頁面來觸發重新初始化
+    console.log('🔄 請重新載入頁面以應用角色切換');
   };
 
   return { switchToRole };

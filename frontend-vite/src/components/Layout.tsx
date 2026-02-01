@@ -24,6 +24,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     { path: '/my-schedule', label: '我的班表', icon: '👤', permission: 'view_own_schedule' },
     { path: '/cross-store-support', label: '跨店支援', icon: '🔄', permission: 'manage_store_schedule' },
     { path: '/work-hours-report', label: '工時報表', icon: '📊', permission: 'view_area_stats' },
+    { path: '/system-admin', label: '系統管理', icon: '⚙️', permission: 'system_overview' },
     { path: '/profile', label: '個人資料', icon: '👤', permission: null },
   ];
 
