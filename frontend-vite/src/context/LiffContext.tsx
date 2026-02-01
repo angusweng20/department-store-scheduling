@@ -66,10 +66,17 @@ export const LiffProvider: React.FC<LiffProviderProps> = ({ children }) => {
       const liffId = import.meta.env.VITE_LINE_LIFF_ID;
       console.log('🔍 LIFF ID Check:', { liffId });
       
-      // NEVER use mock in production - always try real LIFF
+      // For development in external browser, allow mock with warning
       if (!liffId || liffId === 'temp-liff-id-for-development') {
         console.log('⚠️ No valid LIFF ID provided');
-        setError('❌ 沒有有效的 LIFF ID 設置');
+        if (window.location.hostname === 'localhost') {
+          console.log('🔧 Local development, using mock profile');
+          setLiffObject({ mock: true });
+          setIsLoggedIn(true);
+          setProfile(mockProfile);
+        } else {
+          setError('❌ 沒有有效的 LIFF ID 設置');
+        }
         setIsLoading(false);
         return;
       }
@@ -101,9 +108,12 @@ export const LiffProvider: React.FC<LiffProviderProps> = ({ children }) => {
           error: liffError
         });
         
-        // NEVER fallback to mock - always show error
-        console.log('🚫 Showing LIFF initialization error instead of fallback');
-        setError(`LIFF 初始化失敗: ${errorMessage}\n\n請檢查:\n1. LIFF ID: ${liffId}\n2. Domain 設置: ${window.location.hostname}\n3. 是否在 LINE 中開啟: ${isInLineApp ? '是' : '否'}\n4. LIFF 應用是否已發佈`);
+        // For external browser, provide helpful message
+        if (!isInLineApp) {
+          setError(`❌ 不在 LINE 環境中\n\n請在 LINE 聊天室中點擊連結:\n1. 傳送 https://department-store-scheduling.vercel.app 給自己\n2. 在 LINE 中點擊連結\n\nLIFF 只能在 LINE 環境中運作\n\n錯誤詳情: ${errorMessage}`);
+        } else {
+          setError(`LIFF 初始化失敗: ${errorMessage}\n\n請檢查:\n1. LIFF ID: ${liffId}\n2. Domain 設置: ${window.location.hostname}\n3. 是否在 LINE 中開啟: ${isInLineApp ? '是' : '否'}\n4. LIFF 應用是否已發佈`);
+        }
         
         // Set error state
         setLiffObject(null);
