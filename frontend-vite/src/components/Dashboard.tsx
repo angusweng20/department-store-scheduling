@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useStaff, useSchedules, useLeaveRequests } from '../hooks/useApi';
 
 const Dashboard: React.FC = () => {
@@ -55,9 +56,12 @@ const Dashboard: React.FC = () => {
           <p className="text-gray-600 mt-1">歡迎回來！這是您的排班系統概覽</p>
         </div>
         <div className="flex space-x-3">
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+          <Link 
+            to="/schedules" 
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
             ➕ 新增排班
-          </button>
+          </Link>
           <button className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors">
             📥 匯入資料
           </button>
@@ -157,9 +161,12 @@ const Dashboard: React.FC = () => {
         <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg font-semibold text-gray-900">最近請假申請</h2>
-            <button className="text-sm text-blue-600 hover:text-blue-700">
+            <Link 
+              to="/leave-requests" 
+              className="text-sm text-blue-600 hover:text-blue-700"
+            >
               查看全部
-            </button>
+            </Link>
           </div>
           <div className="space-y-3">
             {recentLeaves.length === 0 ? (
@@ -204,21 +211,30 @@ const Dashboard: React.FC = () => {
       <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">快速操作</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors">
+          <Link 
+            to="/schedules" 
+            className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors block"
+          >
             <span className="text-2xl mb-2 block">📅</span>
             <p className="font-medium text-gray-900">建立排班</p>
             <p className="text-sm text-gray-600">為員工安排班次</p>
-          </button>
-          <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors">
+          </Link>
+          <Link 
+            to="/leave-requests" 
+            className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors block"
+          >
             <span className="text-2xl mb-2 block">📝</span>
             <p className="font-medium text-gray-900">審核請假</p>
             <p className="text-sm text-gray-600">處理請假申請</p>
-          </button>
-          <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors">
+          </Link>
+          <Link 
+            to="/my-schedule" 
+            className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors block"
+          >
             <span className="text-2xl mb-2 block">📊</span>
-            <p className="font-medium text-gray-900">查看報表</p>
-            <p className="text-sm text-gray-600">分析排班數據</p>
-          </button>
+            <p className="font-medium text-gray-900">我的班表</p>
+            <p className="text-sm text-gray-600">查看個人班表</p>
+          </Link>
         </div>
       </div>
     </div>
