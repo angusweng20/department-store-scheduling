@@ -63,6 +63,17 @@ const MySchedulePage: React.FC = () => {
           </p>
         </div>
 
+        {/* 調試資訊 */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <h3 className="text-sm font-medium text-blue-900 mb-2">調試資訊</h3>
+          <div className="text-xs text-blue-700 space-y-1">
+            <div><strong>班表數量:</strong> {shifts.length}</div>
+            <div><strong>請假數量:</strong> {requests.length}</div>
+            <div><strong>用戶ID:</strong> {profile?.userId || 'N/A'}</div>
+            <div><strong>當前月份:</strong> {currentMonth.toISOString()}</div>
+          </div>
+        </div>
+
         {/* 月曆 */}
         <CalendarNew
           shifts={shifts}
@@ -81,18 +92,6 @@ const MySchedulePage: React.FC = () => {
           </ul>
         </div>
       </div>
-      
-      {/* 詳情卡片 */}
-      {showDetailCard && selectedDate && (
-        <ShiftDetailCard
-          date={selectedDate}
-          schedule={selectedSchedule}
-          leaveRequest={selectedLeaveRequest}
-          onClose={handleCloseDetail}
-          onRequestLeave={handleRequestLeave}
-          onCancelLeave={handleCancelLeave}
-        />
-      )}
     </div>
   );
 };
