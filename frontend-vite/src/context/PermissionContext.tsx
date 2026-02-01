@@ -44,6 +44,19 @@ const mockUsers: User[] = [
     createdAt: '2026-01-01T00:00:00Z',
     updatedAt: '2026-01-01T00:00:00Z'
   },
+  // 🔧 請在這裡加入您的 LINE 用戶 ID 作為超級管理員
+  // 將 'YOUR_LINE_USER_ID' 替換為您的實際 LINE 用戶 ID
+  {
+    id: '999',
+    lineUserId: 'YOUR_LINE_USER_ID', // 🔧 請修改這裡
+    name: '系統管理員',
+    email: 'admin@your-company.com',
+    phone: '0999999999',
+    role: UserRole.SYSTEM_ADMIN,
+    isActive: true,
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z'
+  },
   {
     id: '1',
     lineUserId: 'U1234567890',
@@ -216,9 +229,23 @@ export const PermissionProvider: React.FC<PermissionProviderProps> = ({ children
   };
 
   useEffect(() => {
-    // 開發階段預設設定為測試人員
+    // 開發階段預設定為測試人員
     // 實際應用中會從 LIFF Context 獲取用戶資訊
-    setCurrentUserForDevelopment('TESTER_USER'); // 測試人員
+    
+    // 🔧 請在這裡填入您的 LINE 用戶 ID
+    // 您可以透過以下方式取得您的 LINE 用戶 ID：
+    // 1. 先登入系統
+    // 2. 查看個人資料頁面的調試資訊
+    // 3. 複製 "用戶ID" 欄位的值
+    
+    // 👇 請將 'YOUR_LINE_USER_ID' 替換為您的實際 LINE 用戶 ID
+    const YOUR_LINE_USER_ID = 'YOUR_LINE_USER_ID'; // 🔧 請修改這裡
+    
+    // 如果您已經知道自己的 LINE 用戶 ID，請直接修改上面的值
+    // 例如：const YOUR_LINE_USER_ID = 'U1234567890abcdef';
+    
+    // 暫時使用測試人員帳號 (您可以修改為超級管理員)
+    setCurrentUserForDevelopment(YOUR_LINE_USER_ID === 'YOUR_LINE_USER_ID' ? 'TESTER_USER' : YOUR_LINE_USER_ID);
   }, []);
 
   const value: PermissionContextType = {
