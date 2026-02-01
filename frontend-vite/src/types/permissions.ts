@@ -1,0 +1,193 @@
+// 權限等級定義
+export const UserRole = {
+  HQ_ADMIN: 'hq_admin',        // 公司管理
+  AREA_MANAGER: 'area_manager', // 地區經理
+  STORE_MANAGER: 'store_manager', // 專櫃櫃長
+  STAFF: 'staff'              // 專櫃人員
+} as const;
+
+export type UserRole = typeof UserRole[keyof typeof UserRole];
+
+// 權限定義
+export interface Permission {
+  role: UserRole;
+  permissions: string[];
+}
+
+// 櫃點資訊
+export interface Store {
+  id: string;
+  name: string;
+  code: string; // 如：台中拉拉、南港拉拉
+  areaId: string; // 所屬地區
+  managerId?: string; // 櫃長ID
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// 地區資訊
+export interface Area {
+  id: string;
+  name: string;
+  managerId?: string; // 地區經理ID
+  stores: Store[];
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// 用戶擴展資訊
+export interface User {
+  id: string;
+  lineUserId: string; // LINE 用戶ID
+  name: string;
+  email: string;
+  phone: string;
+  role: UserRole;
+  storeId?: string; // 所屬櫃點
+  areaId?: string; // 所屬地區 (僅地區經理以上)
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// 活動標籤
+export interface ActivityTag {
+  id: string;
+  date: string;
+  tagName: string; // 如：週年慶、百貨活動
+  isLeaveRestricted: boolean; // 是否禁止請假
+  minStaffRequired: number; // 最低在位人數
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// 班次擴展
+export interface Shift {
+  id: string;
+  userId: string;
+  storeId: string;
+  date: string;
+  shiftType: 'morning' | 'evening' | 'full';
+  startTime: string;
+  endTime: string;
+  breakTime: number; // 休息時間(小時)
+  actualHours: number; // 實際工作時數
+  isSupportShift: boolean; // 是否為外派支援
+  originalStoreId?: string; // 原屬櫃點 (外派時使用)
+  targetStoreId?: string; // 目標櫃點 (外派時使用)
+  status: 'scheduled' | 'completed' | 'cancelled';
+  createdAt: string;
+  updatedAt: string;
+}
+
+// 請假申請擴展
+export interface LeaveRequest {
+  id: string;
+  userId: string;
+  storeId: string;
+  leaveType: 'annual' | 'sick' | 'personal' | 'maternity' | 'other';
+  startDate: string;
+  endDate: string;
+  reason: string;
+  status: 'pending' | 'approved' | 'rejected';
+  approverId?: string; // 審核人ID
+  approvalLevel: number; // 審核級別
+  maxApprovalLevel: number; // 最大審核級別
+  createdAt: string;
+  updatedAt: string;
+}
+
+// 工時統計
+export interface WorkHourStats {
+  userId: string;
+  userName: string;
+  storeId: string;
+  period: string; // 月份，如：2026-02
+  regularHours: number; // 原店工時
+  supportHours: number; // 支援工時
+  totalHours: number; // 總工時
+  supportDetails: {
+    targetStoreId: string;
+    targetStoreName: string;
+    hours: number;
+  }[];
+}
+
+// 權限檢查函數
+export const hasPermission = (userRole: UserRole, requiredRole: UserRole): boolean => {
+  const roleHierarchy = {
+    [UserRole.HQ_ADMIN]: 4,
+    [UserRole.AREA_MANAGER]: 3,
+    [UserRole.STORE_MANAGER]: 2,
+    [UserRole.STAFF]: 1
+  };
+  
+  return roleHierarchy[userRole] >= roleHierarchy[requiredRole];
+};
+
+// 權限操作定義
+export const PERMISSIONS = {
+  // 公司管理權限
+  MANAGE_STORES: 'manage_stores',
+  MANAGE_AREAS: 'manage_areas',
+  SET_GLOBAL_RULES: 'set_global_rules',
+  ASSIGN_PERMISSIONS: 'assign_permissions',
+  
+  // 地區經理權限
+  VIEW_AREA_STATS: 'view_area_stats',
+  APPROVE_CROSS_STORE_LEAVE: 'approve_cross_store_leave',
+  
+  // 專櫃櫃長權限
+  MANAGE_STORE_SCHEDULE: 'manage_store_schedule',
+  APPROVE_STAFF_LEAVE: 'approve_staff_leave',
+  SET_STORE_ACTIVITIES: 'set_store_activities',
+  
+  // 專櫃人員權限
+  VIEW_OWN_SCHEDULE: 'view_own_schedule',
+  REQUEST_LEAVE: 'request_leave',
+  VIEW_OWN_HOURS: 'view_own_hours'
+};
+
+// 角色權限映射
+export const ROLE_PERMISSIONS = {
+  [UserRole.HQ_ADMIN]: [
+    PERMISSIONS.MANAGE_STORES,
+    PERMISSIONS.MANAGE_AREAS,
+    PERMISSIONS.SET_GLOBAL_RULES,
+    PERMISSIONS.ASSIGN_PERMISSIONS,
+    PERMISSIONS.VIEW_AREA_STATS,
+    PERMISSIONS.APPROVE_CROSS_STORE_LEAVE,
+    PERMISSIONS.MANAGE_STORE_SCHEDULE,
+    PERMISSIONS.APPROVE_STAFF_LEAVE,
+    PERMISSIONS.SET_STORE_ACTIVITIES,
+    PERMISSIONS.VIEW_OWN_SCHEDULE,
+    PERMISSIONS.REQUEST_LEAVE,
+    PERMISSIONS.VIEW_OWN_HOURS
+  ],
+  [UserRole.AREA_MANAGER]: [
+    PERMISSIONS.VIEW_AREA_STATS,
+    PERMISSIONS.APPROVE_CROSS_STORE_LEAVE,
+    PERMISSIONS.MANAGE_STORE_SCHEDULE,
+    PERMISSIONS.APPROVE_STAFF_LEAVE,
+    PERMISSIONS.SET_STORE_ACTIVITIES,
+    PERMISSIONS.VIEW_OWN_SCHEDULE,
+    PERMISSIONS.REQUEST_LEAVE,
+    PERMISSIONS.VIEW_OWN_HOURS
+  ],
+  [UserRole.STORE_MANAGER]: [
+    PERMISSIONS.MANAGE_STORE_SCHEDULE,
+    PERMISSIONS.APPROVE_STAFF_LEAVE,
+    PERMISSIONS.SET_STORE_ACTIVITIES,
+    PERMISSIONS.VIEW_OWN_SCHEDULE,
+    PERMISSIONS.REQUEST_LEAVE,
+    PERMISSIONS.VIEW_OWN_HOURS
+  ],
+  [UserRole.STAFF]: [
+    PERMISSIONS.VIEW_OWN_SCHEDULE,
+    PERMISSIONS.REQUEST_LEAVE,
+    PERMISSIONS.VIEW_OWN_HOURS
+  ]
+};

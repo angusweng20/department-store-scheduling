@@ -8,6 +8,7 @@ import MyScheduleTestPage from './components/MyScheduleTestPage';
 import ProfilePage from './components/ProfilePage';
 import LiffLoading from './components/LiffLoading';
 import { useLiff } from './context/LiffContext';
+import { PermissionProvider } from './context/PermissionContext';
 
 function App() {
   const { isLoading, isLoggedIn, error, login } = useLiff();
@@ -68,18 +69,20 @@ function App() {
 
   // Main app when logged in
   return (
-    <Router>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/schedules" element={<SchedulesPage />} />
-          <Route path="/leave-requests" element={<LeaveRequestsPage />} />
-          <Route path="/staff" element={<StaffPage />} />
-          <Route path="/my-schedule" element={<MyScheduleTestPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-        </Routes>
-      </Layout>
-    </Router>
+    <PermissionProvider>
+      <Router>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/schedules" element={<SchedulesPage />} />
+            <Route path="/leave-requests" element={<LeaveRequestsPage />} />
+            <Route path="/staff" element={<StaffPage />} />
+            <Route path="/my-schedule" element={<MyScheduleTestPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+          </Routes>
+        </Layout>
+      </Router>
+    </PermissionProvider>
   );
 }
 
