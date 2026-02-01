@@ -66,11 +66,10 @@ export const LiffProvider: React.FC<LiffProviderProps> = ({ children }) => {
       const liffId = import.meta.env.VITE_LINE_LIFF_ID;
       console.log('🔍 LIFF ID Check:', { liffId });
       
+      // NEVER use mock in production - always try real LIFF
       if (!liffId || liffId === 'temp-liff-id-for-development') {
-        console.log('⚠️ No valid LIFF ID provided, using mock profile');
-        setLiffObject({ mock: true });
-        setIsLoggedIn(true);
-        setProfile(mockProfile);
+        console.log('⚠️ No valid LIFF ID provided');
+        setError('❌ 沒有有效的 LIFF ID 設置');
         setIsLoading(false);
         return;
       }
@@ -104,15 +103,17 @@ export const LiffProvider: React.FC<LiffProviderProps> = ({ children }) => {
         
         // NEVER fallback to mock - always show error
         console.log('🚫 Showing LIFF initialization error instead of fallback');
-        setError(`LIFF 初始化失敗: ${errorMessage}\n\n請檢查:\n1. LIFF ID: ${liffId}\n2. Domain 設置: ${window.location.hostname}\n3. 是否在 LINE 中開啟: ${isInLineApp ? '是' : '否'}`);
+        setError(`LIFF 初始化失敗: ${errorMessage}\n\n請檢查:\n1. LIFF ID: ${liffId}\n2. Domain 設置: ${window.location.hostname}\n3. 是否在 LINE 中開啟: ${isInLineApp ? '是' : '否'}\n4. LIFF 應用是否已發佈`);
         
-        // Set mock state to show error page
-        setLiffObject({ mock: true });
+        // Set error state
+        setLiffObject(null);
         setIsLoggedIn(false);
       }
     } catch (err) {
       console.error('❌ General initialization failed:', err);
       setError(err instanceof Error ? err.message : 'LIFF initialization failed');
+      setLiffObject(null);
+      setIsLoggedIn(false);
     } finally {
       setIsLoading(false);
     }
