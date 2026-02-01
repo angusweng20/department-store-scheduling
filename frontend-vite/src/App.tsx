@@ -6,6 +6,8 @@ import LeaveRequestsPage from './components/LeaveRequestsPage';
 import StaffPage from './components/StaffPage';
 import MyScheduleTestPage from './components/MyScheduleTestPage';
 import ProfilePage from './components/ProfilePage';
+import CrossStoreSupportPage from './components/CrossStoreSupportPage';
+import WorkHoursReportPage from './components/WorkHoursReportPage';
 import LiffLoading from './components/LiffLoading';
 import { useLiff } from './context/LiffContext';
 import { PermissionProvider } from './context/PermissionContext';
@@ -78,6 +80,8 @@ function App() {
             <Route path="/leave-requests" element={<LeaveRequestsPage />} />
             <Route path="/staff" element={<StaffPage />} />
             <Route path="/my-schedule" element={<MyScheduleTestPage />} />
+            <Route path="/cross-store-support" element={<CrossStoreSupportPage />} />
+            <Route path="/work-hours-report" element={<WorkHoursReportPage />} />
             <Route path="/profile" element={<ProfilePage />} />
           </Routes>
         </Layout>

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useLiff } from '../context/LiffContext';
+import { usePermission } from '../context/PermissionContext';
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { profile, logout } = useLiff();
+  const { hasPermission } = usePermission();
 
   // 當路由變化時關閉手機選單
   useEffect(() => {
@@ -15,12 +17,14 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const isActive = (path: string) => location.pathname === path;
 
   const navigation = [
-    { path: '/', label: '儀表板', icon: '📊' },
-    { path: '/schedules', label: '排班管理', icon: '📅' },
-    { path: '/leave-requests', label: '請假申請', icon: '📝' },
-    { path: '/staff', label: '員工管理', icon: '👥' },
-    { path: '/my-schedule', label: '我的班表', icon: '👤' },
-    { path: '/profile', label: '個人資料', icon: '👤' },
+    { path: '/', label: '儀表板', icon: '📊', permission: null },
+    { path: '/schedules', label: '排班管理', icon: '📅', permission: 'manage_store_schedule' },
+    { path: '/leave-requests', label: '請假申請', icon: '📝', permission: 'approve_staff_leave' },
+    { path: '/staff', label: '員工管理', icon: '👥', permission: 'manage_stores' },
+    { path: '/my-schedule', label: '我的班表', icon: '👤', permission: 'view_own_schedule' },
+    { path: '/cross-store-support', label: '跨店支援', icon: '🔄', permission: 'manage_store_schedule' },
+    { path: '/work-hours-report', label: '工時報表', icon: '📊', permission: 'view_area_stats' },
+    { path: '/profile', label: '個人資料', icon: '👤', permission: null },
   ];
 
   return (
@@ -38,7 +42,9 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex space-x-8">
-              {navigation.map((item) => (
+              {navigation
+                .filter(item => !item.permission || hasPermission(item.permission))
+                .map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}
