@@ -39,113 +39,99 @@ export const useSchedule = (currentMonth: Date): UseScheduleReturn => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Mock data for development
-  const mockShifts: Shift[] = [
-    {
-      id: '1',
-      user_id: userId,
-      date: '2026-01-05',
-      shift_type: 'morning',
-      is_published: true,
-      created_at: '2026-01-01T00:00:00Z',
-      updated_at: '2026-01-01T00:00:00Z'
-    },
-    {
-      id: '2',
-      user_id: userId,
-      date: '2026-01-06',
-      shift_type: 'evening',
-      is_published: true,
-      created_at: '2026-01-01T00:00:00Z',
-      updated_at: '2026-01-01T00:00:00Z'
-    },
-    {
-      id: '3',
-      user_id: userId,
-      date: '2026-01-07',
-      shift_type: 'full',
-      is_published: true,
-      created_at: '2026-01-01T00:00:00Z',
-      updated_at: '2026-01-01T00:00:00Z'
-    },
-    {
-      id: '4',
-      user_id: userId,
-      date: '2026-01-12',
-      shift_type: 'morning',
-      is_published: true,
-      created_at: '2026-01-01T00:00:00Z',
-      updated_at: '2026-01-01T00:00:00Z'
-    },
-    {
-      id: '5',
-      user_id: userId,
-      date: '2026-01-15',
-      shift_type: 'evening',
-      is_published: true,
-      created_at: '2026-01-01T00:00:00Z',
-      updated_at: '2026-01-01T00:00:00Z'
-    },
-    {
-      id: '6',
-      user_id: userId,
-      date: '2026-01-20',
-      shift_type: 'full',
-      is_published: true,
-      created_at: '2026-01-01T00:00:00Z',
-      updated_at: '2026-01-01T00:00:00Z'
-    }
-  ];
+  // Mock data for development - 使用當前月份的資料
+  const getCurrentMonthData = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    
+    return [
+      {
+        id: '1',
+        user_id: userId,
+        date: `${year}-${String(month + 1).padStart(2, '0')}-05`,
+        shift_type: 'morning' as const,
+        is_published: true,
+        created_at: '2026-01-01T00:00:00Z',
+        updated_at: '2026-01-01T00:00:00Z',
+      },
+      {
+        id: '2',
+        user_id: userId,
+        date: `${year}-${String(month + 1).padStart(2, '0')}-12`,
+        shift_type: 'evening' as const,
+        is_published: true,
+        created_at: '2026-01-01T00:00:00Z',
+        updated_at: '2026-01-01T00:00:00Z',
+      },
+      {
+        id: '3',
+        user_id: userId,
+        date: `${year}-${String(month + 1).padStart(2, '0')}-18`,
+        shift_type: 'full' as const,
+        is_published: true,
+        created_at: '2026-01-01T00:00:00Z',
+        updated_at: '2026-01-01T00:00:00Z',
+      },
+      {
+        id: '4',
+        user_id: userId,
+        date: `${year}-${String(month + 1).padStart(2, '0')}-25`,
+        shift_type: 'morning' as const,
+        is_published: true,
+        created_at: '2026-01-01T00:00:00Z',
+        updated_at: '2026-01-01T00:00:00Z',
+      },
+    ];
+  };
 
+  const mockShifts: Shift[] = getCurrentMonthData();
+  
   const mockRequests: LeaveRequest[] = [
     {
       id: '1',
       user_id: userId,
-      date: '2026-01-10',
+      date: '2026-02-15',
       status: 'pending',
-      reason: '家裡有事',
+      reason: '個人事務',
       created_at: '2026-01-01T00:00:00Z',
-      updated_at: '2026-01-01T00:00:00Z'
+      updated_at: '2026-01-01T00:00:00Z',
     },
     {
       id: '2',
       user_id: userId,
-      date: '2026-01-25',
+      date: '2026-02-22',
       status: 'approved',
-      reason: '身體不適',
+      reason: '家庭聚會',
       created_at: '2026-01-01T00:00:00Z',
-      updated_at: '2026-01-01T00:00:00Z'
-    }
+      updated_at: '2026-01-01T00:00:00Z',
+    },
   ];
 
-  // Fetch data for current month
+  // Fetch data
   const fetchData = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const year = currentMonth.getFullYear();
-      const month = currentMonth.getMonth() + 1;
-
-      // For now, use mock data
       // TODO: Replace with actual Supabase calls
-      console.log(`Fetching data for ${userId} - ${year}-${month}`);
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Use mock data for now
       setShifts(mockShifts);
       setRequests(mockRequests);
       
+      console.log('✅ Schedule data loaded:', { shifts: mockShifts, requests: mockRequests });
     } catch (err) {
       console.error('Error fetching schedule data:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch data');
+      setError(err instanceof Error ? err.message : 'Failed to fetch schedule data');
     } finally {
       setLoading(false);
     }
   };
 
-  // Toggle leave request with optimistic UI
+  // Toggle leave request
   const toggleLeaveRequest = async (date: Date) => {
     const dateStr = date.toISOString().split('T')[0];
     
@@ -199,10 +185,9 @@ export const useSchedule = (currentMonth: Date): UseScheduleReturn => {
     await fetchData();
   };
 
-  // Fetch data when month changes
   useEffect(() => {
     fetchData();
-  }, [currentMonth, userId]);
+  }, [currentMonth]);
 
   return {
     shifts,
