@@ -63,11 +63,11 @@ export const LiffProvider: React.FC<LiffProviderProps> = ({ children }) => {
       });
 
       // Initialize LIFF for production - ALWAYS try real LIFF first
-      const liffId = import.meta.env.VITE_LINE_LIFF_ID;
+      const liffId = '2008933336-FQOc7tz9'; // 直接使用正確的 LIFF ID
       console.log('🔍 LIFF ID Check:', { liffId });
       
       // For development in external browser, allow mock with warning
-      if (!liffId || liffId === 'temp-liff-id-for-development') {
+      if (!liffId) {
         console.log('⚠️ No valid LIFF ID provided');
         if (window.location.hostname === 'localhost') {
           console.log('🔧 Local development, using mock profile');
