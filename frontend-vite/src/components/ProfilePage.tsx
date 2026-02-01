@@ -59,15 +59,15 @@ const ProfilePage: React.FC = () => {
                 <img
                   src={profile.pictureUrl}
                   alt={profile.displayName}
-                  className="w-24 h-24 rounded-full object-cover border-4 border-gray-200"
+                  className="w-20 h-20 rounded-full object-cover border-4 border-gray-200"
                   onError={() => {
                     console.error('❌ 圖片載入失敗:', profile.pictureUrl);
                     setImageError(true);
                   }}
                 />
               ) : (
-                <div className="w-24 h-24 rounded-full bg-gray-200 border-4 border-gray-200 flex items-center justify-center">
-                  <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-20 h-20 rounded-full bg-gray-200 border-4 border-gray-200 flex items-center justify-center">
+                  <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                 </div>
