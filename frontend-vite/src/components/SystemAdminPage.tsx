@@ -175,9 +175,16 @@ const SystemAdminPage: React.FC = () => {
   };
 
   const handleCloseModal = () => {
+    console.log('🚨🚨🚨 SystemAdminPage handleCloseModal 被調用！🚨🚨🚨');
+    console.log('🚨🚨🚨 當前 showCompanyModal:', showCompanyModal);
+    console.log('🚨🚨🚨 當前 showCompanyDetail:', showCompanyDetail);
+    console.log('🚨🚨🚨 當前 selectedCompany:', selectedCompany);
+    
     setShowCompanyModal(false);
     setShowCompanyDetail(false);
     setSelectedCompany(null);
+    
+    console.log('🚨🚨🚨 handleCloseModal 執行完成！🚨🚨🚨');
   };
 
   const tabs = [

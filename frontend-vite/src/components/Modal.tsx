@@ -11,6 +11,14 @@ interface ModalProps {
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, size = 'md' }) => {
   if (!isOpen) return null;
 
+  console.log('🔥🔥🔥 Modal 組件渲染 - title:', title, 'size:', size);
+
+  const handleClose = () => {
+    console.log('🚨🚨🚨 Modal onClose 被調用！這可能是導致組件卸載的原因！🚨🚨🚨');
+    console.log('🚨🚨🚨 Modal title:', title);
+    onClose();
+  };
+
   const sizeClasses = {
     sm: 'max-w-md',
     md: 'max-w-lg',
@@ -25,17 +33,20 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, size = 
         {/* Background overlay */}
         <div 
           className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"
-          onClick={onClose}
+          onClick={handleClose}
         ></div>
 
         {/* Modal panel */}
-        <div className={`inline-block w-full my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-lg ${sizeClasses[size]}`}>
+        <div 
+          className={`inline-block w-full my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-lg ${sizeClasses[size]}`}
+          onClick={(e) => e.stopPropagation()}
+        >
           {/* Modal header */}
           <div className="px-6 py-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-medium text-gray-900">{title}</h3>
               <button
-                onClick={onClose}
+                onClick={handleClose}
                 className="text-gray-400 hover:text-gray-500 focus:outline-none"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
