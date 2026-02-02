@@ -44,11 +44,15 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ stores, companyName, onBack }
     console.log('當前模態框狀態:', showStoreModal);
     console.log('當前選中的專櫃:', selectedStore);
     
+    // 強制更新狀態
     setModalMode('edit');
     setSelectedStore(store);
-    setShowStoreModal(true);
     
-    console.log('設置模態框為顯示狀態');
+    // 使用 setTimeout 確保狀態更新完成後再顯示模態框
+    setTimeout(() => {
+      setShowStoreModal(true);
+      console.log('設置模態框為顯示狀態');
+    }, 100);
   };
 
   const handleSaveStore = (store: any) => {
@@ -271,20 +275,31 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ stores, companyName, onBack }
       </div>
 
       {/* 專櫃表單模態框 */}
-      <Modal
-        isOpen={showStoreModal}
-        onClose={handleCloseModal}
-        title={modalMode === 'add' ? '新增專櫃' : '編輯專櫃'}
-        size="lg"
-      >
-        <StoreForm
-          store={selectedStore}
-          companyId={storeList[0]?.companyId || ''}
-          companyName={companyName}
-          onSave={handleSaveStore}
-          onCancel={handleCloseModal}
-        />
-      </Modal>
+      {showStoreModal && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999 }}>
+          <Modal
+            isOpen={showStoreModal}
+            onClose={handleCloseModal}
+            title={modalMode === 'add' ? '新增專櫃' : '編輯專櫃'}
+            size="lg"
+          >
+            <StoreForm
+              store={selectedStore}
+              companyId={storeList[0]?.companyId || ''}
+              companyName={companyName}
+              onSave={handleSaveStore}
+              onCancel={handleCloseModal}
+            />
+          </Modal>
+        </div>
+      )}
+      
+      {/* 調試信息 */}
+      <div style={{ position: 'fixed', bottom: 10, right: 10, background: 'black', color: 'white', padding: '10px', fontSize: '12px', zIndex: 10000 }}>
+        <div>模態框狀態: {showStoreModal.toString()}</div>
+        <div>模式: {modalMode}</div>
+        <div>選中專櫃: {selectedStore ? selectedStore.name : '無'}</div>
+      </div>
     </div>
   );
 };
