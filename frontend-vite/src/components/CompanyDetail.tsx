@@ -161,9 +161,9 @@ const CompanyDetail: React.FC<CompanyDetailProps> = ({ company, onEdit, onClose 
           <h3 className="text-lg font-medium text-gray-900">所屬專櫃</h3>
           <button
             onClick={handleViewStores}
-            className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm"
           >
-            管理專櫃 →
+            🏪 管理專櫃
           </button>
         </div>
         <div className="bg-gray-50 rounded-lg p-4">
@@ -175,10 +175,15 @@ const CompanyDetail: React.FC<CompanyDetailProps> = ({ company, onEdit, onClose 
                     <h4 className="font-medium text-gray-900">{store.name}</h4>
                     <p className="text-sm text-gray-500">櫃點代碼: {store.code}</p>
                     <p className="text-sm text-gray-500">地區: {store.areaName}</p>
+                    <p className="text-sm text-gray-500">櫃長: {store.managerName}</p>
                   </div>
                   <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
                     {store.status === 'active' ? '營運中' : '停用'}
                   </span>
+                </div>
+                <div className="mt-2 flex space-x-2">
+                  <button className="text-xs text-blue-600 hover:text-blue-800">編輯</button>
+                  <button className="text-xs text-gray-600 hover:text-gray-800">查看詳情</button>
                 </div>
               </div>
             ))}
@@ -186,7 +191,7 @@ const CompanyDetail: React.FC<CompanyDetailProps> = ({ company, onEdit, onClose 
           <div className="mt-3 text-center">
             <button
               onClick={handleViewStores}
-              className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+              className="text-blue-600 hover:text-blue-800 text-sm font-medium bg-white px-4 py-2 rounded-lg border border-blue-300 hover:border-blue-500 transition-colors"
             >
               查看全部 {companyStores.length} 個專櫃 →
             </button>
