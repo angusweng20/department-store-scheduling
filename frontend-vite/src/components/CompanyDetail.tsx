@@ -81,9 +81,13 @@ const CompanyDetail: React.FC<CompanyDetailProps> = ({ company, onEdit, onClose 
   };
 
   const handleEditStore = (store: any) => {
+    console.log('🔥🔥🔥 handleEditStore 被調用 (VERSION 3.0) 🔥🔥🔥');
     console.log('編輯專櫃:', store);
-    // 這裡可以開啟編輯專櫃的模態框
-    // 暫時只顯示日誌
+    console.log('準備進入 StoreDetail 組件進行編輯');
+    
+    // 設置要編輯的專櫃並進入專櫃詳情頁面
+    setShowStoreDetail(true);
+    console.log('設置 showStoreDetail 為 true，進入專櫃管理頁面');
   };
 
   if (showStoreDetail) {
@@ -167,6 +171,7 @@ const CompanyDetail: React.FC<CompanyDetailProps> = ({ company, onEdit, onClose 
           <h3 className="text-lg font-medium text-gray-900">所屬專櫃</h3>
           <button
             onClick={(e) => {
+              console.log('🔥🔥🔥 管理專櫃按鈕被點擊 (VERSION 3.0) 🔥🔥🔥');
               e.preventDefault();
               e.stopPropagation();
               console.log('管理專櫃按鈕被點擊');
@@ -195,6 +200,7 @@ const CompanyDetail: React.FC<CompanyDetailProps> = ({ company, onEdit, onClose 
                 <div className="mt-2 flex space-x-2">
                   <button 
                     onClick={(e) => {
+                      console.log('🔥🔥🔥 公司詳情中的編輯按鈕被點擊 (VERSION 3.0) 🔥🔥🔥');
                       e.preventDefault();
                       e.stopPropagation();
                       console.log('公司詳情中的編輯按鈕被點擊:', store);
