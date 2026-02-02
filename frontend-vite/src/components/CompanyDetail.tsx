@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import StoreDetail from './StoreDetail';
 
 interface Company {
@@ -67,14 +67,26 @@ const CompanyDetail: React.FC<CompanyDetailProps> = ({ company, onEdit, onClose 
     }
   ]);
 
+  // 監控 showStoreDetail 狀態變化
+  useEffect(() => {
+    console.log('🔥🔥🔥 useEffect - showStoreDetail 狀態變化:', showStoreDetail);
+    console.log('🔥🔥🔥 useEffect - 當前時間:', new Date().toISOString());
+  }, [showStoreDetail]);
+
   const handleViewStores = () => {
-    console.log('🔥🔥🔥 handleViewStores 開始 (VERSION 3.0) 🔥🔥🔥');
+    console.log('🔥🔥🔥 handleViewStores 開始 (VERSION 4.0) 🔥🔥🔥');
     console.log('當前 showStoreDetail 狀態:', showStoreDetail);
     console.log('companyStores 數量:', companyStores.length);
     console.log('當前時間:', new Date().toISOString());
+    
+    // 強制設置狀態
     setShowStoreDetail(true);
-    console.log('設置 showStoreDetail 為 true');
-    console.log('🔥🔥🔥 handleViewStores 結束 (VERSION 3.0) 🔥🔥🔥');
+    
+    // 使用 setTimeout 來確認狀態設置
+    setTimeout(() => {
+      console.log('🔥🔥🔥 setTimeout 後的 showStoreDetail 狀態:', showStoreDetail);
+      console.log('🔥🔥🔥 handleViewStores 結束 (VERSION 4.0) 🔥🔥🔥');
+    }, 100);
   };
 
   const handleBackToCompany = () => {
@@ -92,13 +104,33 @@ const CompanyDetail: React.FC<CompanyDetailProps> = ({ company, onEdit, onClose 
   };
 
   if (showStoreDetail) {
-    return (
-      <StoreDetail
-        stores={companyStores}
-        companyName={company.name}
-        onBack={handleBackToCompany}
-      />
-    );
+    console.log('🔥🔥🔥 準備渲染 StoreDetail 組件 (VERSION 4.0) 🔥🔥🔥');
+    console.log('companyStores:', companyStores);
+    console.log('companyName:', company.name);
+    
+    try {
+      return (
+        <StoreDetail
+          stores={companyStores}
+          companyName={company.name}
+          onBack={handleBackToCompany}
+        />
+      );
+    } catch (error) {
+      console.error('🚨 StoreDetail 渲染錯誤:', error);
+      return (
+        <div className="p-4 bg-red-100 border border-red-400 rounded-lg">
+          <h3 className="text-red-800 font-bold">渲染錯誤</h3>
+          <p className="text-red-600">StoreDetail 組件渲染失敗</p>
+          <button 
+            onClick={handleBackToCompany}
+            className="mt-2 px-4 py-2 bg-red-600 text-white rounded"
+          >
+            返回公司詳情
+          </button>
+        </div>
+      );
+    }
   }
   return (
     <div className="space-y-6">
