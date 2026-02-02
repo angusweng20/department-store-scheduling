@@ -67,9 +67,10 @@ const CompanyDetail: React.FC<CompanyDetailProps> = ({ company, onEdit, onClose 
   ];
 
   const handleViewStores = () => {
-    console.log('=== handleViewStores 開始 ===');
+    console.log('=== handleViewStores 開始 (v2.0) ===');
     console.log('當前 showStoreDetail 狀態:', showStoreDetail);
     console.log('companyStores 數量:', companyStores.length);
+    console.log('當前時間:', new Date().toISOString());
     setShowStoreDetail(true);
     console.log('設置 showStoreDetail 為 true');
     console.log('=== handleViewStores 結束 ===');
