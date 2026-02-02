@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import StoreForm from './StoreForm';
-import Modal from './Modal';
 
 interface Store {
   id: string;
@@ -274,31 +272,133 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ stores, companyName, onBack }
         </div>
       </div>
 
-      {/* 專櫃表單模態框 */}
+      {/* 專櫃表單模態框 - 簡化版本 */}
       {showStoreModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999 }}>
-          <Modal
-            isOpen={showStoreModal}
-            onClose={handleCloseModal}
-            title={modalMode === 'add' ? '新增專櫃' : '編輯專櫃'}
-            size="lg"
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 99999
+          }}
+          onClick={handleCloseModal}
+        >
+          <div 
+            style={{
+              backgroundColor: 'white',
+              padding: '20px',
+              borderRadius: '8px',
+              maxWidth: '600px',
+              width: '90%',
+              maxHeight: '80vh',
+              overflow: 'auto'
+            }}
+            onClick={(e) => e.stopPropagation()}
           >
-            <StoreForm
-              store={selectedStore}
-              companyId={storeList[0]?.companyId || ''}
-              companyName={companyName}
-              onSave={handleSaveStore}
-              onCancel={handleCloseModal}
-            />
-          </Modal>
+            <h2 style={{ marginBottom: '20px' }}>
+              {modalMode === 'add' ? '新增專櫃' : '編輯專櫃'}
+            </h2>
+            
+            {/* 簡化的表單 */}
+            <div style={{ marginBottom: '15px' }}>
+              <label style={{ display: 'block', marginBottom: '5px' }}>專櫃名稱:</label>
+              <input
+                type="text"
+                value={selectedStore?.name || ''}
+                onChange={(e) => setSelectedStore((prev: any) => prev ? {...prev, name: e.target.value} : null)}
+                style={{ width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }}
+              />
+            </div>
+            
+            <div style={{ marginBottom: '15px' }}>
+              <label style={{ display: 'block', marginBottom: '5px' }}>專櫃代碼:</label>
+              <input
+                type="text"
+                value={selectedStore?.code || ''}
+                onChange={(e) => setSelectedStore((prev: any) => prev ? {...prev, code: e.target.value} : null)}
+                style={{ width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }}
+              />
+            </div>
+            
+            <div style={{ marginBottom: '15px' }}>
+              <label style={{ display: 'block', marginBottom: '5px' }}>櫃長姓名:</label>
+              <input
+                type="text"
+                value={selectedStore?.managerName || ''}
+                onChange={(e) => setSelectedStore((prev: any) => prev ? {...prev, managerName: e.target.value} : null)}
+                style={{ width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }}
+              />
+            </div>
+            
+            <div style={{ marginBottom: '15px' }}>
+              <label style={{ display: 'block', marginBottom: '5px' }}>電話:</label>
+              <input
+                type="text"
+                value={selectedStore?.phone || ''}
+                onChange={(e) => setSelectedStore((prev: any) => prev ? {...prev, phone: e.target.value} : null)}
+                style={{ width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }}
+              />
+            </div>
+            
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+              <button
+                onClick={handleCloseModal}
+                style={{
+                  padding: '8px 16px',
+                  border: '1px solid #ccc',
+                  borderRadius: '4px',
+                  backgroundColor: '#f5f5f5',
+                  cursor: 'pointer'
+                }}
+              >
+                取消
+              </button>
+              <button
+                onClick={() => {
+                  if (selectedStore) {
+                    handleSaveStore(selectedStore);
+                  }
+                }}
+                style={{
+                  padding: '8px 16px',
+                  border: 'none',
+                  borderRadius: '4px',
+                  backgroundColor: '#007bff',
+                  color: 'white',
+                  cursor: 'pointer'
+                }}
+              >
+                {modalMode === 'add' ? '新增' : '更新'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
       
       {/* 調試信息 */}
-      <div style={{ position: 'fixed', bottom: 10, right: 10, background: 'black', color: 'white', padding: '10px', fontSize: '12px', zIndex: 10000 }}>
+      <div style={{ 
+        position: 'fixed', 
+        bottom: 10, 
+        right: 10, 
+        background: 'black', 
+        color: 'white', 
+        padding: '10px', 
+        fontSize: '12px', 
+        zIndex: 100000,
+        borderRadius: '4px',
+        maxWidth: '300px'
+      }}>
         <div>模態框狀態: {showStoreModal.toString()}</div>
         <div>模式: {modalMode}</div>
         <div>選中專櫃: {selectedStore ? selectedStore.name : '無'}</div>
+        <div>專櫃ID: {selectedStore ? selectedStore.id : '無'}</div>
+        <div>公司ID: {selectedStore ? selectedStore.companyId : '無'}</div>
       </div>
     </div>
   );
