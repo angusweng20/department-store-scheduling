@@ -24,7 +24,8 @@ interface CompanyDetailProps {
 }
 
 const CompanyDetail: React.FC<CompanyDetailProps> = ({ company, onEdit, onClose }) => {
-  console.log(' CompanyDetail 組件載入 - VERSION 3.0 -', new Date().toISOString());
+  console.log('🔥🔥🔥🔥 CompanyDetail 組件載入 - VERSION 4.0 FINAL -', new Date().toISOString());
+  console.log('🔥🔥🔥🔥 如果看到這個版本，說明部署成功！🔥🔥🔥🔥');
   
   const [showStoreDetail, setShowStoreDetail] = useState(false);
   const [companyStores] = useState([
