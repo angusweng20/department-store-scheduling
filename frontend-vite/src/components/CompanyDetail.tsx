@@ -24,25 +24,25 @@ interface CompanyDetailProps {
 }
 
 const CompanyDetail: React.FC<CompanyDetailProps> = ({ company, onEdit, onClose }) => {
+  console.log(' CompanyDetail 組件載入 - VERSION 3.0 -', new Date().toISOString());
+  
   const [showStoreDetail, setShowStoreDetail] = useState(false);
-
-  // Mock 該公司的專櫃資料
-  const companyStores = [
+  const [companyStores] = useState([
     {
       id: 'store-1',
-      name: '台中拉拉',
-      code: 'TAICHUNG_LALA',
+      name: '南港專櫃',
+      code: 'NG-001',
       companyId: company.id,
       companyName: company.name,
       areaId: 'area-1',
-      areaName: '中部地區',
-      managerId: 'manager-1',
-      managerName: '張櫃長',
-      phone: '04-12345678',
-      email: 'taichung@lala.com',
-      address: '台中市西區美村路一段123號',
+      areaName: '南港區',
+      managerId: 'user-1',
+      managerName: '王小明',
+      phone: '02-1234-5678',
+      email: 'nangang@lala.com',
+      address: '台北市南港區重陽路456號',
       status: 'active' as const,
-      employeeCount: 25,
+      employeeCount: 18,
       createdAt: '2026-01-01T00:00:00Z',
       updatedAt: '2026-01-01T00:00:00Z'
     },
@@ -64,16 +64,16 @@ const CompanyDetail: React.FC<CompanyDetailProps> = ({ company, onEdit, onClose 
       createdAt: '2026-01-01T00:00:00Z',
       updatedAt: '2026-01-01T00:00:00Z'
     }
-  ];
+  ]);
 
   const handleViewStores = () => {
-    console.log('=== handleViewStores 開始 (v2.0) ===');
+    console.log('🔥🔥🔥 handleViewStores 開始 (VERSION 3.0) 🔥🔥🔥');
     console.log('當前 showStoreDetail 狀態:', showStoreDetail);
     console.log('companyStores 數量:', companyStores.length);
     console.log('當前時間:', new Date().toISOString());
     setShowStoreDetail(true);
     console.log('設置 showStoreDetail 為 true');
-    console.log('=== handleViewStores 結束 ===');
+    console.log('🔥🔥🔥 handleViewStores 結束 (VERSION 3.0) 🔥🔥🔥');
   };
 
   const handleBackToCompany = () => {
