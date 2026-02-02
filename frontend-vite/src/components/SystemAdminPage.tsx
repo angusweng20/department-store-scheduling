@@ -676,7 +676,7 @@ const SystemAdminPage: React.FC = () => {
         isOpen={showCompanyDetail}
         onClose={handleCloseModal}
         title="公司詳情"
-        size="xl"
+        size="full"
       >
         {selectedCompany && (
           <CompanyDetail
