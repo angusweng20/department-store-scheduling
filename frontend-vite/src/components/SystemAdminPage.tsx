@@ -120,6 +120,7 @@ const SystemAdminPage: React.FC = () => {
 
   const tabs = [
     { id: 'overview', label: '系統概覽', icon: '📊' },
+    { id: 'company', label: '公司管理', icon: '🏢' },
     { id: 'users', label: '用戶管理', icon: '👥' },
     { id: 'stores', label: '櫃點管理', icon: '🏪' },
     { id: 'system', label: '系統設定', icon: '⚙️' }
@@ -248,6 +249,123 @@ const SystemAdminPage: React.FC = () => {
                       <button className="w-full text-left px-3 py-2 text-sm bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                         🔧 系統維護模式
                       </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 公司管理 */}
+          {activeTab === 'company' && (
+            <div className="space-y-6">
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">公司管理</h2>
+                
+                {/* 公司統計 */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                  <div className="bg-blue-50 rounded-lg p-4">
+                    <div className="text-2xl font-bold text-blue-600">3</div>
+                    <div className="text-sm text-blue-800">總公司數</div>
+                  </div>
+                  <div className="bg-green-50 rounded-lg p-4">
+                    <div className="text-2xl font-bold text-green-600">12</div>
+                    <div className="text-sm text-green-800">總櫃點數</div>
+                  </div>
+                  <div className="bg-purple-50 rounded-lg p-4">
+                    <div className="text-2xl font-bold text-purple-600">156</div>
+                    <div className="text-sm text-purple-800">總員工數</div>
+                  </div>
+                </div>
+
+                {/* 公司列表 */}
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-md font-medium text-gray-900">公司列表</h3>
+                    <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm">
+                      ➕ 新增公司
+                    </button>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="text-lg font-medium text-gray-900">班班百貨股份有限公司</h4>
+                          <p className="text-sm text-gray-500">統一編號: 12345678</p>
+                          <p className="text-sm text-gray-500">負責人: 總經理</p>
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            <span className="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded">12 櫃點</span>
+                            <span className="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded">156 員工</span>
+                            <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded">營運中</span>
+                          </div>
+                        </div>
+                        <div className="flex space-x-2">
+                          <button className="text-sm text-blue-600 hover:text-blue-900">編輯</button>
+                          <button className="text-sm text-gray-600 hover:text-gray-900">查看</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="text-lg font-medium text-gray-900">拉拉百貨股份有限公司</h4>
+                          <p className="text-sm text-gray-500">統一編號: 87654321</p>
+                          <p className="text-sm text-gray-500">負責人: 地區經理</p>
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            <span className="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded">8 櫃點</span>
+                            <span className="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded">98 員工</span>
+                            <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded">營運中</span>
+                          </div>
+                        </div>
+                        <div className="flex space-x-2">
+                          <button className="text-sm text-blue-600 hover:text-blue-900">編輯</button>
+                          <button className="text-sm text-gray-600 hover:text-gray-900">查看</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 公司設定 */}
+                <div className="mt-6 pt-6 border-t border-gray-200">
+                  <h3 className="text-md font-medium text-gray-900 mb-4">公司設定</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-700 mb-3">全域設定</h4>
+                      <div className="space-y-2">
+                        <label className="flex items-center">
+                          <input type="checkbox" className="mr-2" defaultChecked />
+                          <span className="text-sm text-gray-600">啟用跨店支援功能</span>
+                        </label>
+                        <label className="flex items-center">
+                          <input type="checkbox" className="mr-2" defaultChecked />
+                          <span className="text-sm text-gray-600">啟用自動排班建議</span>
+                        </label>
+                        <label className="flex items-center">
+                          <input type="checkbox" className="mr-2" defaultChecked />
+                          <span className="text-sm text-gray-600">啟用工時統計功能</span>
+                        </label>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-700 mb-3">權限設定</h4>
+                      <div className="space-y-2">
+                        <label className="flex items-center">
+                          <input type="checkbox" className="mr-2" defaultChecked />
+                          <span className="text-sm text-gray-600">地區經理可跨區管理</span>
+                        </label>
+                        <label className="flex items-center">
+                          <input type="checkbox" className="mr-2" defaultChecked />
+                          <span className="text-sm text-gray-600">櫃長可管理員工請假</span>
+                        </label>
+                        <label className="flex items-center">
+                          <input type="checkbox" className="mr-2" />
+                          <span className="text-sm text-gray-600">員工可自行調換班次</span>
+                        </label>
+                      </div>
                     </div>
                   </div>
                 </div>

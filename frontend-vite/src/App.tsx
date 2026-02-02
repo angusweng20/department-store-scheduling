@@ -13,6 +13,7 @@ import RoleSwitcher from './components/RoleSwitcher';
 import LiffLoading from './components/LiffLoading';
 import { useLiff } from './context/LiffContext';
 import { PermissionProvider } from './context/PermissionContext';
+import { RoleSwitchProvider } from './context/RoleSwitchContext';
 
 function App() {
   const { isLoading, isLoggedIn, error, login } = useLiff();
@@ -74,22 +75,24 @@ function App() {
   // Main app when logged in
   return (
     <PermissionProvider>
-      <Router>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/schedules" element={<SchedulesPage />} />
-            <Route path="/leave-requests" element={<LeaveRequestsPage />} />
-            <Route path="/staff" element={<StaffPage />} />
-            <Route path="/my-schedule" element={<MyScheduleTestPage />} />
-            <Route path="/cross-store-support" element={<CrossStoreSupportPage />} />
-            <Route path="/work-hours-report" element={<WorkHoursReportPage />} />
-            <Route path="/system-admin" element={<SystemAdminPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-          </Routes>
-          <RoleSwitcher />
-        </Layout>
-      </Router>
+      <RoleSwitchProvider>
+        <Router>
+          <Layout>
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/schedules" element={<SchedulesPage />} />
+              <Route path="/leave-requests" element={<LeaveRequestsPage />} />
+              <Route path="/staff" element={<StaffPage />} />
+              <Route path="/my-schedule" element={<MyScheduleTestPage />} />
+              <Route path="/cross-store-support" element={<CrossStoreSupportPage />} />
+              <Route path="/work-hours-report" element={<WorkHoursReportPage />} />
+              <Route path="/system-admin" element={<SystemAdminPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+            </Routes>
+            <RoleSwitcher />
+          </Layout>
+        </Router>
+      </RoleSwitchProvider>
     </PermissionProvider>
   );
 }

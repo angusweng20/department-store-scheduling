@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { usePermission } from '../context/PermissionContext';
 import { useDevUserSwitch } from '../context/PermissionContext';
+import { useRoleSwitch } from '../context/RoleSwitchContext';
 import { UserRole } from '../types/permissions';
 
 const RoleSwitcher: React.FC = () => {
   const { userRole, hasPermission } = usePermission();
   const { switchToRole } = useDevUserSwitch();
+  const { currentViewRole, isViewMode, switchToView, exitViewMode } = useRoleSwitch();
   const [isOpen, setIsOpen] = useState(false);
 
   // 只有測試人員和系統管理員可以看到角色切換器
@@ -46,10 +48,32 @@ const RoleSwitcher: React.FC = () => {
     }
   ];
 
-  const currentRoleOption = roleOptions.find(option => option.value === userRole);
+  const currentRoleOption = roleOptions.find(option => 
+    isViewMode ? option.value === currentViewRole : option.value === userRole
+  );
 
   const handleRoleSwitch = (role: UserRole) => {
-    switchToRole(role);
+    // 如果是超級管理員，提供兩種切換模式
+    if (userRole === UserRole.SYSTEM_ADMIN) {
+      const mode = window.confirm('選擇切換模式：\n\n確定 → 永久切換角色\n取消 → 僅切換視角（可隨時返回）');
+      
+      if (mode) {
+        // 永久切換角色
+        switchToRole(role);
+      } else {
+        // 僅切換視角
+        switchToView(role);
+      }
+    } else {
+      // 其他角色直接切換
+      switchToRole(role);
+    }
+    
+    setIsOpen(false);
+  };
+
+  const handleExitViewMode = () => {
+    exitViewMode();
     setIsOpen(false);
   };
 
