@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { usePermission } from '../context/PermissionContext';
 import ProtectedRoute from './ProtectedRoute';
-import type { User, Store, Area } from '../types/permissions';
+import type { User, Store } from '../types/permissions';
 
 const SystemAdminPage: React.FC = () => {
   const { hasPermission } = usePermission();
-  const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'stores' | 'system'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'company' | 'users' | 'system'>('overview');
 
   // Mock 系統統計資料
   const systemStats = {
@@ -81,14 +81,35 @@ const SystemAdminPage: React.FC = () => {
     }
   ];
 
-  // Mock 地區資料
-  const mockAreas: Area[] = [
+  // Mock 公司資料
+  const mockCompanies = [
     {
-      id: 'area-1',
-      name: '中部地區',
-      managerId: '2',
-      stores: mockStores,
-      isActive: true,
+      id: 'company-1',
+      name: '班班百貨股份有限公司',
+      code: 'BANBAN_DEPT',
+      taxId: '12345678',
+      manager: '總經理',
+      phone: '02-12345678',
+      email: 'contact@banban-dept.com',
+      address: '台北市信義區信義路五段7號',
+      status: 'active',
+      storeCount: 12,
+      employeeCount: 156,
+      createdAt: '2026-01-01T00:00:00Z',
+      updatedAt: '2026-01-01T00:00:00Z'
+    },
+    {
+      id: 'company-2',
+      name: '拉拉百貨股份有限公司',
+      code: 'LALA_DEPT',
+      taxId: '87654321',
+      manager: '地區經理',
+      phone: '02-87654321',
+      email: 'contact@lala-dept.com',
+      address: '台北市大安區敦化南路二段76號',
+      status: 'active',
+      storeCount: 8,
+      employeeCount: 98,
       createdAt: '2026-01-01T00:00:00Z',
       updatedAt: '2026-01-01T00:00:00Z'
     }
@@ -122,7 +143,6 @@ const SystemAdminPage: React.FC = () => {
     { id: 'overview', label: '系統概覽', icon: '📊' },
     { id: 'company', label: '公司管理', icon: '🏢' },
     { id: 'users', label: '用戶管理', icon: '👥' },
-    { id: 'stores', label: '櫃點管理', icon: '🏪' },
     { id: 'system', label: '系統設定', icon: '⚙️' }
   ];
 
@@ -288,47 +308,66 @@ const SystemAdminPage: React.FC = () => {
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="border border-gray-200 rounded-lg p-4">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h4 className="text-lg font-medium text-gray-900">班班百貨股份有限公司</h4>
-                          <p className="text-sm text-gray-500">統一編號: 12345678</p>
-                          <p className="text-sm text-gray-500">負責人: 總經理</p>
-                          <div className="mt-2 flex flex-wrap gap-2">
-                            <span className="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded">12 櫃點</span>
-                            <span className="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded">156 員工</span>
-                            <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded">營運中</span>
+                    {mockCompanies.map((company) => (
+                      <div key={company.id} className="border border-gray-200 rounded-lg p-4">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h4 className="text-lg font-medium text-gray-900">{company.name}</h4>
+                            <p className="text-sm text-gray-500">統一編號: {company.taxId}</p>
+                            <p className="text-sm text-gray-500">負責人: {company.manager}</p>
+                            <p className="text-sm text-gray-500">電話: {company.phone}</p>
+                            <p className="text-sm text-gray-500">地址: {company.address}</p>
+                            <div className="mt-2 flex flex-wrap gap-2">
+                              <span className="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded">{company.storeCount} 櫃點</span>
+                              <span className="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded">{company.employeeCount} 員工</span>
+                              <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded">
+                                {company.status === 'active' ? '營運中' : '停用'}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex space-x-2">
+                            <button className="text-sm text-blue-600 hover:text-blue-900">編輯</button>
+                            <button className="text-sm text-gray-600 hover:text-gray-900">查看櫃點</button>
                           </div>
                         </div>
-                        <div className="flex space-x-2">
-                          <button className="text-sm text-blue-600 hover:text-blue-900">編輯</button>
-                          <button className="text-sm text-gray-600 hover:text-gray-900">查看</button>
-                        </div>
                       </div>
-                    </div>
-
-                    <div className="border border-gray-200 rounded-lg p-4">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h4 className="text-lg font-medium text-gray-900">拉拉百貨股份有限公司</h4>
-                          <p className="text-sm text-gray-500">統一編號: 87654321</p>
-                          <p className="text-sm text-gray-500">負責人: 地區經理</p>
-                          <div className="mt-2 flex flex-wrap gap-2">
-                            <span className="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded">8 櫃點</span>
-                            <span className="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded">98 員工</span>
-                            <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded">營運中</span>
-                          </div>
-                        </div>
-                        <div className="flex space-x-2">
-                          <button className="text-sm text-blue-600 hover:text-blue-900">編輯</button>
-                          <button className="text-sm text-gray-600 hover:text-gray-900">查看</button>
-                        </div>
-                      </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
 
-                {/* 公司設定 */}
+                {/* 櫃點管理 */}
+                <div className="mt-6 pt-6 border-t border-gray-200">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-md font-medium text-gray-900">櫃點管理</h3>
+                    <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm">
+                      ➕ 新增櫃點
+                    </button>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {mockStores.map((store) => (
+                      <div key={store.id} className="border border-gray-200 rounded-lg p-4">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h4 className="text-lg font-medium text-gray-900">{store.name}</h4>
+                            <p className="text-sm text-gray-500">櫃點代碼: {store.code}</p>
+                            <p className="text-sm text-gray-500">所屬公司: 班班百貨股份有限公司</p>
+                            <div className="mt-2 flex flex-wrap gap-2">
+                              <span className="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded">中部地區</span>
+                              <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded">
+                                {store.isActive ? '營運中' : '停用'}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex space-x-2">
+                            <button className="text-sm text-blue-600 hover:text-blue-900">編輯</button>
+                            <button className="text-sm text-gray-600 hover:text-gray-900">查看詳情</button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
                 <div className="mt-6 pt-6 border-t border-gray-200">
                   <h3 className="text-md font-medium text-gray-900 mb-4">公司設定</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -430,37 +469,6 @@ const SystemAdminPage: React.FC = () => {
                     ))}
                   </tbody>
                 </table>
-              </div>
-            </div>
-          )}
-
-          {/* 櫃點管理 */}
-          {activeTab === 'stores' && (
-            <div className="space-y-6">
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">櫃點管理</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {mockStores.map((store) => (
-                    <div key={store.id} className="border border-gray-200 rounded-lg p-4">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="text-lg font-medium text-gray-900">{store.name}</h3>
-                          <p className="text-sm text-gray-500">{store.code}</p>
-                          <p className="text-sm text-gray-500 mt-1">地區: {mockAreas.find(a => a.id === store.areaId)?.name}</p>
-                        </div>
-                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                          store.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                        }`}>
-                          {store.isActive ? '營運中' : '停用'}
-                        </span>
-                      </div>
-                      <div className="mt-4 flex space-x-2">
-                        <button className="text-sm text-indigo-600 hover:text-indigo-900">編輯</button>
-                        <button className="text-sm text-gray-600 hover:text-gray-900">查看詳情</button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
               </div>
             </div>
           )}
