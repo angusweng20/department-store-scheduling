@@ -67,7 +67,12 @@ const CompanyDetail: React.FC<CompanyDetailProps> = ({ company, onEdit, onClose 
   ];
 
   const handleViewStores = () => {
+    console.log('=== handleViewStores 開始 ===');
+    console.log('當前 showStoreDetail 狀態:', showStoreDetail);
+    console.log('companyStores 數量:', companyStores.length);
     setShowStoreDetail(true);
+    console.log('設置 showStoreDetail 為 true');
+    console.log('=== handleViewStores 結束 ===');
   };
 
   const handleBackToCompany = () => {
@@ -160,7 +165,12 @@ const CompanyDetail: React.FC<CompanyDetailProps> = ({ company, onEdit, onClose 
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-medium text-gray-900">所屬專櫃</h3>
           <button
-            onClick={handleViewStores}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              console.log('管理專櫃按鈕被點擊');
+              handleViewStores();
+            }}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm"
           >
             🏪 管理專櫃
@@ -182,15 +192,39 @@ const CompanyDetail: React.FC<CompanyDetailProps> = ({ company, onEdit, onClose 
                   </span>
                 </div>
                 <div className="mt-2 flex space-x-2">
-                  <button className="text-xs text-blue-600 hover:text-blue-800">編輯</button>
-                  <button className="text-xs text-gray-600 hover:text-gray-800">查看詳情</button>
+                  <button 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log('公司詳情中的編輯按鈕被點擊:', store);
+                      handleEditStore(store);
+                    }}
+                    className="text-xs text-blue-600 hover:text-blue-800"
+                  >
+                    編輯
+                  </button>
+                  <button 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log('公司詳情中的查看詳情按鈕被點擊:', store);
+                    }}
+                    className="text-xs text-gray-600 hover:text-gray-800"
+                  >
+                    查看詳情
+                  </button>
                 </div>
               </div>
             ))}
           </div>
           <div className="mt-3 text-center">
             <button
-              onClick={handleViewStores}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('查看全部專櫃按鈕被點擊');
+                handleViewStores();
+              }}
               className="text-blue-600 hover:text-blue-800 text-sm font-medium bg-white px-4 py-2 rounded-lg border border-blue-300 hover:border-blue-500 transition-colors"
             >
               查看全部 {companyStores.length} 個專櫃 →
