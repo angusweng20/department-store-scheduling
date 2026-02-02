@@ -1,11 +1,20 @@
 import React, { useState } from 'react';
 import { usePermission } from '../context/PermissionContext';
 import ProtectedRoute from './ProtectedRoute';
+import Modal from './Modal';
+import CompanyForm from './CompanyForm';
+import CompanyDetail from './CompanyDetail';
 import type { User, Store } from '../types/permissions';
 
 const SystemAdminPage: React.FC = () => {
   const { hasPermission } = usePermission();
   const [activeTab, setActiveTab] = useState<'overview' | 'company' | 'users' | 'system'>('overview');
+  
+  // 模態框狀態
+  const [showCompanyModal, setShowCompanyModal] = useState(false);
+  const [showCompanyDetail, setShowCompanyDetail] = useState(false);
+  const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
+  const [selectedCompany, setSelectedCompany] = useState<any>(null);
 
   // Mock 系統統計資料
   const systemStats = {
@@ -137,6 +146,38 @@ const SystemAdminPage: React.FC = () => {
       'staff': 'bg-green-100 text-green-800'
     };
     return colorMap[role as keyof typeof colorMap] || 'bg-gray-100 text-gray-800';
+  };
+
+  // 處理公司操作
+  const handleAddCompany = () => {
+    setModalMode('add');
+    setSelectedCompany(null);
+    setShowCompanyModal(true);
+  };
+
+  const handleEditCompany = (company: any) => {
+    setModalMode('edit');
+    setSelectedCompany(company);
+    setShowCompanyModal(true);
+  };
+
+  const handleViewCompany = (company: any) => {
+    setSelectedCompany(company);
+    setShowCompanyDetail(true);
+  };
+
+  const handleSaveCompany = (company: any) => {
+    console.log('保存公司:', company);
+    // 這裡應該調用 API 保存公司資料
+    alert(`${modalMode === 'add' ? '新增' : '更新'}公司成功！`);
+    setShowCompanyModal(false);
+    setSelectedCompany(null);
+  };
+
+  const handleCloseModal = () => {
+    setShowCompanyModal(false);
+    setShowCompanyDetail(false);
+    setSelectedCompany(null);
   };
 
   const tabs = [
@@ -302,7 +343,10 @@ const SystemAdminPage: React.FC = () => {
                 <div className="space-y-4">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="text-md font-medium text-gray-900">公司列表</h3>
-                    <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm">
+                    <button 
+                      onClick={handleAddCompany}
+                      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                    >
                       ➕ 新增公司
                     </button>
                   </div>
@@ -326,8 +370,18 @@ const SystemAdminPage: React.FC = () => {
                             </div>
                           </div>
                           <div className="flex space-x-2">
-                            <button className="text-sm text-blue-600 hover:text-blue-900">編輯</button>
-                            <button className="text-sm text-gray-600 hover:text-gray-900">查看櫃點</button>
+                            <button 
+                              onClick={() => handleEditCompany(company)}
+                              className="text-sm text-blue-600 hover:text-blue-900"
+                            >
+                              編輯
+                            </button>
+                            <button 
+                              onClick={() => handleViewCompany(company)}
+                              className="text-sm text-gray-600 hover:text-gray-900"
+                            >
+                              查看櫃點
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -512,6 +566,39 @@ const SystemAdminPage: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* 公司表單模態框 */}
+      <Modal
+        isOpen={showCompanyModal}
+        onClose={handleCloseModal}
+        title={modalMode === 'add' ? '新增公司' : '編輯公司'}
+        size="lg"
+      >
+        <CompanyForm
+          company={selectedCompany}
+          onSave={handleSaveCompany}
+          onCancel={handleCloseModal}
+        />
+      </Modal>
+
+      {/* 公司詳情模態框 */}
+      <Modal
+        isOpen={showCompanyDetail}
+        onClose={handleCloseModal}
+        title="公司詳情"
+        size="xl"
+      >
+        {selectedCompany && (
+          <CompanyDetail
+            company={selectedCompany}
+            onEdit={() => {
+              setShowCompanyDetail(false);
+              handleEditCompany(selectedCompany);
+            }}
+            onClose={handleCloseModal}
+          />
+        )}
+      </Modal>
     </ProtectedRoute>
   );
 };
