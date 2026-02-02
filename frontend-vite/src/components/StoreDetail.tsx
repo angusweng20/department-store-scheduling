@@ -25,10 +25,9 @@ interface StoreDetailProps {
   stores: Store[];
   companyName: string;
   onBack: () => void;
-  onEditStore: (store: Store) => void;
 }
 
-const StoreDetail: React.FC<StoreDetailProps> = ({ stores, companyName, onBack, onEditStore }) => {
+const StoreDetail: React.FC<StoreDetailProps> = ({ stores, companyName, onBack }) => {
   const [showStoreModal, setShowStoreModal] = useState(false);
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [selectedStore, setSelectedStore] = useState<any>(null);
@@ -41,6 +40,7 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ stores, companyName, onBack, 
   };
 
   const handleEditStore = (store: any) => {
+    console.log('編輯專櫃:', store);
     setModalMode('edit');
     setSelectedStore(store);
     setShowStoreModal(true);

@@ -77,6 +77,7 @@ const CompanyDetail: React.FC<CompanyDetailProps> = ({ company, onEdit, onClose 
   const handleEditStore = (store: any) => {
     console.log('編輯專櫃:', store);
     // 這裡可以開啟編輯專櫃的模態框
+    // 暫時只顯示日誌
   };
 
   if (showStoreDetail) {
@@ -85,7 +86,6 @@ const CompanyDetail: React.FC<CompanyDetailProps> = ({ company, onEdit, onClose 
         stores={companyStores}
         companyName={company.name}
         onBack={handleBackToCompany}
-        onEditStore={handleEditStore}
       />
     );
   }
