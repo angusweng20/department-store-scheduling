@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import StoreDetail from './StoreDetail';
 
 interface Company {
   id: string;
@@ -23,6 +24,71 @@ interface CompanyDetailProps {
 }
 
 const CompanyDetail: React.FC<CompanyDetailProps> = ({ company, onEdit, onClose }) => {
+  const [showStoreDetail, setShowStoreDetail] = useState(false);
+
+  // Mock 該公司的專櫃資料
+  const companyStores = [
+    {
+      id: 'store-1',
+      name: '台中拉拉',
+      code: 'TAICHUNG_LALA',
+      companyId: company.id,
+      companyName: company.name,
+      areaId: 'area-1',
+      areaName: '中部地區',
+      managerId: 'manager-1',
+      managerName: '張櫃長',
+      phone: '04-12345678',
+      email: 'taichung@lala.com',
+      address: '台中市西區美村路一段123號',
+      status: 'active' as const,
+      employeeCount: 25,
+      createdAt: '2026-01-01T00:00:00Z',
+      updatedAt: '2026-01-01T00:00:00Z'
+    },
+    {
+      id: 'store-2',
+      name: '南港拉拉',
+      code: 'NANGANG_LALA',
+      companyId: company.id,
+      companyName: company.name,
+      areaId: 'area-1',
+      areaName: '北部地區',
+      managerId: 'manager-2',
+      managerName: '李櫃長',
+      phone: '02-87654321',
+      email: 'nangang@lala.com',
+      address: '台北市南港區重陽路456號',
+      status: 'active' as const,
+      employeeCount: 18,
+      createdAt: '2026-01-01T00:00:00Z',
+      updatedAt: '2026-01-01T00:00:00Z'
+    }
+  ];
+
+  const handleViewStores = () => {
+    setShowStoreDetail(true);
+  };
+
+  const handleBackToCompany = () => {
+    setShowStoreDetail(false);
+  };
+
+  const handleEditStore = (store: any) => {
+    console.log('編輯專櫃:', store);
+    // 這裡可以開啟編輯專櫃的模態框
+  };
+
+  if (showStoreDetail) {
+    return (
+      <StoreDetail
+        stores={companyStores}
+        companyName={company.name}
+        onBack={handleBackToCompany}
+        onEditStore={handleEditStore}
+      />
+    );
+  }
   return (
     <div className="space-y-6">
       {/* 公司基本資訊 */}
@@ -91,32 +157,38 @@ const CompanyDetail: React.FC<CompanyDetailProps> = ({ company, onEdit, onClose 
 
       {/* 櫃點列表 */}
       <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">所屬櫃點</h3>
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-medium text-gray-900">所屬專櫃</h3>
+          <button
+            onClick={handleViewStores}
+            className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+          >
+            管理專櫃 →
+          </button>
+        </div>
         <div className="bg-gray-50 rounded-lg p-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {/* Mock 櫃點資料 */}
-            <div className="bg-white rounded-lg p-3 border border-gray-200">
-              <div className="flex justify-between items-center">
-                <div>
-                  <h4 className="font-medium text-gray-900">台中拉拉</h4>
-                  <p className="text-sm text-gray-500">櫃點代碼: TAICHUNG_LALA</p>
+            {companyStores.map((store) => (
+              <div key={store.id} className="bg-white rounded-lg p-3 border border-gray-200">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h4 className="font-medium text-gray-900">{store.name}</h4>
+                    <p className="text-sm text-gray-500">櫃點代碼: {store.code}</p>
+                    <p className="text-sm text-gray-500">地區: {store.areaName}</p>
+                  </div>
+                  <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
+                    {store.status === 'active' ? '營運中' : '停用'}
+                  </span>
                 </div>
-                <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">營運中</span>
               </div>
-            </div>
-            <div className="bg-white rounded-lg p-3 border border-gray-200">
-              <div className="flex justify-between items-center">
-                <div>
-                  <h4 className="font-medium text-gray-900">南港拉拉</h4>
-                  <p className="text-sm text-gray-500">櫃點代碼: NANGANG_LALA</p>
-                </div>
-                <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">營運中</span>
-              </div>
-            </div>
+            ))}
           </div>
           <div className="mt-3 text-center">
-            <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
-              查看全部 {company.storeCount} 個櫃點 →
+            <button
+              onClick={handleViewStores}
+              className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+            >
+              查看全部 {companyStores.length} 個專櫃 →
             </button>
           </div>
         </div>

@@ -8,7 +8,7 @@ import type { User, Store } from '../types/permissions';
 
 const SystemAdminPage: React.FC = () => {
   const { hasPermission } = usePermission();
-  const [activeTab, setActiveTab] = useState<'overview' | 'company' | 'users' | 'system'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'department' | 'company' | 'users' | 'system'>('overview');
   
   // 模態框狀態
   const [showCompanyModal, setShowCompanyModal] = useState(false);
@@ -182,6 +182,7 @@ const SystemAdminPage: React.FC = () => {
 
   const tabs = [
     { id: 'overview', label: '系統概覽', icon: '📊' },
+    { id: 'department', label: '百貨管理', icon: '🏬' },
     { id: 'company', label: '公司管理', icon: '🏢' },
     { id: 'users', label: '用戶管理', icon: '👥' },
     { id: 'system', label: '系統設定', icon: '⚙️' }
@@ -317,6 +318,127 @@ const SystemAdminPage: React.FC = () => {
             </div>
           )}
 
+          {/* 百貨管理 */}
+          {activeTab === 'department' && (
+            <div className="space-y-6">
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">百貨管理</h2>
+                
+                {/* 百貨統計 */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                  <div className="bg-blue-50 rounded-lg p-4">
+                    <div className="text-2xl font-bold text-blue-600">3</div>
+                    <div className="text-sm text-blue-800">總百貨數</div>
+                  </div>
+                  <div className="bg-green-50 rounded-lg p-4">
+                    <div className="text-2xl font-bold text-green-600">20</div>
+                    <div className="text-sm text-green-800">總樓層數</div>
+                  </div>
+                  <div className="bg-purple-50 rounded-lg p-4">
+                    <div className="text-2xl font-bold text-purple-600">156</div>
+                    <div className="text-sm text-purple-800">總專櫃數</div>
+                  </div>
+                  <div className="bg-orange-50 rounded-lg p-4">
+                    <div className="text-2xl font-bold text-orange-600">98%</div>
+                    <div className="text-sm text-orange-800">營運率</div>
+                  </div>
+                </div>
+
+                {/* 百貨列表 */}
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-md font-medium text-gray-900">百貨列表</h3>
+                    <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm">
+                      ➕ 新增百貨
+                    </button>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="text-lg font-medium text-gray-900">班班百貨</h4>
+                          <p className="text-sm text-gray-500">地址: 台北市信義區信義路五段7號</p>
+                          <p className="text-sm text-gray-500">營業時間: 11:00-22:00</p>
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            <span className="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded">12樓層</span>
+                            <span className="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded">85專櫃</span>
+                            <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded">營運中</span>
+                          </div>
+                        </div>
+                        <div className="flex space-x-2">
+                          <button className="text-sm text-blue-600 hover:text-blue-900">編輯</button>
+                          <button className="text-sm text-gray-600 hover:text-gray-900">查看樓層</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="text-lg font-medium text-gray-900">拉拉百貨</h4>
+                          <p className="text-sm text-gray-500">地址: 台北市大安區敦化南路二段76號</p>
+                          <p className="text-sm text-gray-500">營業時間: 11:00-22:00</p>
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            <span className="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded">8樓層</span>
+                            <span className="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded">71專櫃</span>
+                            <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded">營運中</span>
+                          </div>
+                        </div>
+                        <div className="flex space-x-2">
+                          <button className="text-sm text-blue-600 hover:text-blue-900">編輯</button>
+                          <button className="text-sm text-gray-600 hover:text-gray-900">查看樓層</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 百貨設定 */}
+                <div className="mt-6 pt-6 border-t border-gray-200">
+                  <h3 className="text-md font-medium text-gray-900 mb-4">百貨設定</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-700 mb-3">營運設定</h4>
+                      <div className="space-y-2">
+                        <label className="flex items-center">
+                          <input type="checkbox" className="mr-2" defaultChecked />
+                          <span className="text-sm text-gray-600">啟用節假日營業</span>
+                        </label>
+                        <label className="flex items-center">
+                          <input type="checkbox" className="mr-2" defaultChecked />
+                          <span className="text-sm text-gray-600">啟用線上預約系統</span>
+                        </label>
+                        <label className="flex items-center">
+                          <input type="checkbox" className="mr-2" />
+                          <span className="text-sm text-gray-600">啟用會員積點系統</span>
+                        </label>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-700 mb-3">服務設定</h4>
+                      <div className="space-y-2">
+                        <label className="flex items-center">
+                          <input type="checkbox" className="mr-2" defaultChecked />
+                          <span className="text-sm text-gray-600">提供停車服務</span>
+                        </label>
+                        <label className="flex items-center">
+                          <input type="checkbox" className="mr-2" defaultChecked />
+                          <span className="text-sm text-gray-600">提供免費WiFi</span>
+                        </label>
+                        <label className="flex items-center">
+                          <input type="checkbox" className="mr-2" defaultChecked />
+                          <span className="text-sm text-gray-600">提供顧客服務中心</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* 公司管理 */}
           {activeTab === 'company' && (
             <div className="space-y-6">
@@ -389,39 +511,7 @@ const SystemAdminPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* 櫃點管理 */}
-                <div className="mt-6 pt-6 border-t border-gray-200">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-md font-medium text-gray-900">櫃點管理</h3>
-                    <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm">
-                      ➕ 新增櫃點
-                    </button>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {mockStores.map((store) => (
-                      <div key={store.id} className="border border-gray-200 rounded-lg p-4">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h4 className="text-lg font-medium text-gray-900">{store.name}</h4>
-                            <p className="text-sm text-gray-500">櫃點代碼: {store.code}</p>
-                            <p className="text-sm text-gray-500">所屬公司: 班班百貨股份有限公司</p>
-                            <div className="mt-2 flex flex-wrap gap-2">
-                              <span className="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded">中部地區</span>
-                              <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded">
-                                {store.isActive ? '營運中' : '停用'}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="flex space-x-2">
-                            <button className="text-sm text-blue-600 hover:text-blue-900">編輯</button>
-                            <button className="text-sm text-gray-600 hover:text-gray-900">查看詳情</button>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                {/* 公司設定 */}
                 <div className="mt-6 pt-6 border-t border-gray-200">
                   <h3 className="text-md font-medium text-gray-900 mb-4">公司設定</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
