@@ -37,10 +37,16 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ stores, companyName, onBack }
     setShowStoreModal(true);
   };
 
-  const handleEditStore = (store: any) => {
+  const handleEditStore = (store: any, event?: React.MouseEvent) => {
+    console.log('=== 編輯專櫃開始 ===');
     console.log('編輯專櫃函數被調用:', store);
     console.log('當前模態框狀態:', showStoreModal);
     console.log('當前選中的專櫃:', selectedStore);
+    console.log('當前模式:', modalMode);
+    
+    // 阻止任何可能的默認行為
+    event?.preventDefault();
+    event?.stopPropagation();
     
     // 強制更新狀態
     setModalMode('edit');
@@ -49,6 +55,7 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ stores, companyName, onBack }
     // 使用 setTimeout 確保狀態更新完成後再顯示模態框
     setTimeout(() => {
       setShowStoreModal(true);
+      console.log('=== 模態框應該顯示 ===');
       console.log('設置模態框為顯示狀態');
     }, 100);
   };
@@ -65,11 +72,11 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ stores, companyName, onBack }
         updatedAt: new Date().toISOString()
       };
       setStoreList(prev => [...prev, newStore]);
-      alert('新增專櫃成功！');
+      console.log('新增專櫃成功！');
     } else {
       // 更新專櫃
       setStoreList(prev => prev.map(s => s.id === store.id ? { ...store, updatedAt: new Date().toISOString() } : s));
-      alert('更新專櫃成功！');
+      console.log('更新專櫃成功！');
     }
     
     setShowStoreModal(false);
@@ -79,7 +86,7 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ stores, companyName, onBack }
   const handleDeleteStore = (storeId: string) => {
     if (confirm('確定要刪除這個專櫃嗎？')) {
       setStoreList(prev => prev.filter(s => s.id !== storeId));
-      alert('刪除專櫃成功！');
+      console.log('刪除專櫃成功！');
     }
   };
 
@@ -199,7 +206,7 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ stores, companyName, onBack }
                         e.preventDefault();
                         e.stopPropagation();
                         console.log('編輯專櫃按鈕被點擊:', store);
-                        handleEditStore(store);
+                        handleEditStore(store, e);
                       }}
                       className="text-blue-600 hover:text-blue-900 mr-3"
                     >
@@ -348,6 +355,7 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ stores, companyName, onBack }
             
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
               <button
+                type="button"
                 onClick={handleCloseModal}
                 style={{
                   padding: '8px 16px',
@@ -360,8 +368,10 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ stores, companyName, onBack }
                 取消
               </button>
               <button
+                type="button"
                 onClick={() => {
                   if (selectedStore) {
+                    console.log('點擊更新按鈕，準備保存:', selectedStore);
                     handleSaveStore(selectedStore);
                   }
                 }}
