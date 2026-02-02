@@ -73,6 +73,15 @@ const CompanyDetail: React.FC<CompanyDetailProps> = ({ company, onEdit, onClose 
     console.log('🔥🔥🔥 useEffect - 當前時間:', new Date().toISOString());
   }, [showStoreDetail]);
 
+  // 監控組件卸載
+  useEffect(() => {
+    console.log('🔥🔥🔥 CompanyDetail 組件掛載 - VERSION 4.0 🔥🔥🔥');
+    
+    return () => {
+      console.log('🚨🚨🚨 CompanyDetail 組件卸載！這可能是問題所在！🚨🚨🚨');
+    };
+  }, []);
+
   const handleViewStores = () => {
     console.log('🔥🔥🔥 handleViewStores 開始 (VERSION 4.0) 🔥🔥🔥');
     console.log('當前 showStoreDetail 狀態:', showStoreDetail);
@@ -204,11 +213,18 @@ const CompanyDetail: React.FC<CompanyDetailProps> = ({ company, onEdit, onClose 
           <h3 className="text-lg font-medium text-gray-900">所屬專櫃</h3>
           <button
             onClick={(e) => {
-              console.log('🔥🔥🔥 管理專櫃按鈕被點擊 (VERSION 3.0) 🔥🔥🔥');
+              console.log('��� 管理專櫃按鈕被點擊！開始執行！🚨🚨🚨');
+              console.log('🚨🚨🚨 事件對象:', e);
+              console.log('��� 當前 showStoreDetail:', showStoreDetail);
+              
               e.preventDefault();
               e.stopPropagation();
+              
+              console.log('🔥🔥🔥 管理專櫃按鈕被點擊 (VERSION 4.0) 🔥🔥🔥');
               console.log('管理專櫃按鈕被點擊');
               handleViewStores();
+              
+              console.log('🚨🚨🚨 handleViewStores 調用完成！🚨🚨🚨');
             }}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm"
           >

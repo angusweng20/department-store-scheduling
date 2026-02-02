@@ -680,6 +680,7 @@ const SystemAdminPage: React.FC = () => {
       >
         {selectedCompany && (
           <CompanyDetail
+            key={`company-${selectedCompany.id}`}
             company={selectedCompany}
             onEdit={() => {
               setShowCompanyDetail(false);
