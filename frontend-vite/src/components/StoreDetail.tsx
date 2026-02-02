@@ -40,10 +40,15 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ stores, companyName, onBack }
   };
 
   const handleEditStore = (store: any) => {
-    console.log('編輯專櫃:', store);
+    console.log('編輯專櫃函數被調用:', store);
+    console.log('當前模態框狀態:', showStoreModal);
+    console.log('當前選中的專櫃:', selectedStore);
+    
     setModalMode('edit');
     setSelectedStore(store);
     setShowStoreModal(true);
+    
+    console.log('設置模態框為顯示狀態');
   };
 
   const handleSaveStore = (store: any) => {
@@ -188,16 +193,33 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ stores, companyName, onBack }
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <button
-                      onClick={() => handleEditStore(store)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('編輯專櫃按鈕被點擊:', store);
+                        handleEditStore(store);
+                      }}
                       className="text-blue-600 hover:text-blue-900 mr-3"
                     >
                       編輯
                     </button>
-                    <button className="text-gray-600 hover:text-gray-900 mr-3">
+                    <button 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('查看專櫃按鈕被點擊:', store);
+                      }}
+                      className="text-gray-600 hover:text-gray-900 mr-3"
+                    >
                       查看
                     </button>
                     <button
-                      onClick={() => handleDeleteStore(store.id)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('刪除專櫃按鈕被點擊:', store.id);
+                        handleDeleteStore(store.id);
+                      }}
                       className="text-red-600 hover:text-red-900"
                     >
                       刪除
