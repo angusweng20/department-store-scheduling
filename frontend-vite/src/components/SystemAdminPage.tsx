@@ -3,8 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { usePermission } from '../context/PermissionContext';
 import ProtectedRoute from './ProtectedRoute';
 import Modal from './Modal';
-import CompanyForm from './CompanyForm';
-import CompanyDetail from './CompanyDetail';
 import type { User, Store } from '../types/permissions';
 
 const SystemAdminPage: React.FC = () => {
@@ -14,7 +12,6 @@ const SystemAdminPage: React.FC = () => {
   
   // 模態框狀態
   const [showCompanyModal, setShowCompanyModal] = useState(false);
-  const [showCompanyDetail, setShowCompanyDetail] = useState(false);
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [selectedCompany, setSelectedCompany] = useState<any>(null);
 
@@ -278,9 +275,10 @@ const SystemAdminPage: React.FC = () => {
     setShowCompanyModal(true);
   };
 
-  const handleViewCompany = (company: any) => {
-    setSelectedCompany(company);
-    setShowCompanyDetail(true);
+  const handleViewCompanyStores = (company: any) => {
+    // 跳轉到專櫃管理頁面，並傳遞公司參數
+    navigate(`/system-admin/stores?company=${company.id}&companyName=${encodeURIComponent(company.name)}`);
+    console.log('🏢 查看公司櫃點:', company);
   };
 
   const handleSaveCompany = (company: any) => {
@@ -292,7 +290,6 @@ const SystemAdminPage: React.FC = () => {
 
   const handleCloseModal = () => {
     setShowCompanyModal(false);
-    setShowCompanyDetail(false);
     setSelectedCompany(null);
   };
 
@@ -536,7 +533,7 @@ const SystemAdminPage: React.FC = () => {
                         </div>
                         <div className="flex space-x-2">
                           <button onClick={() => handleEditCompany(company)} className="text-sm text-blue-600 hover:text-blue-900">編輯</button>
-                          <button onClick={() => handleViewCompany(company)} className="text-sm text-gray-600 hover:text-gray-900">查看櫃點</button>
+                          <button onClick={() => handleViewCompanyStores(company)} className="text-sm text-gray-600 hover:text-gray-900">查看櫃點</button>
                         </div>
                       </div>
                     </div>
@@ -799,26 +796,6 @@ const SystemAdminPage: React.FC = () => {
             </button>
           </div>
         </div>
-      </Modal>
-
-      {/* 公司詳情模態框 */}
-      <Modal
-        isOpen={showCompanyDetail}
-        onClose={handleCloseModal}
-        title="公司詳情"
-        size="full"
-      >
-        {selectedCompany && (
-          <CompanyDetail
-            key={`company-${selectedCompany.id}`}
-            company={selectedCompany}
-            onEdit={() => {
-              setShowCompanyDetail(false);
-              handleEditCompany(selectedCompany);
-            }}
-            onClose={handleCloseModal}
-          />
-        )}
       </Modal>
     </ProtectedRoute>
   );
