@@ -12,6 +12,7 @@ import SystemAdminPage from './components/SystemAdminPage';
 import RoleSwitcher from './components/RoleSwitcher';
 import LiffLoading from './components/LiffLoading';
 import StoreDetailPage from './pages/StoreDetailPage';
+import FloorManagerPage from './pages/FloorManagerPage';
 import { useLiff } from './context/LiffContext';
 import { PermissionProvider } from './context/PermissionContext';
 import { RoleSwitchProvider } from './context/RoleSwitchContext';
@@ -89,6 +90,7 @@ function App() {
               <Route path="/work-hours-report" element={<WorkHoursReportPage />} />
               <Route path="/system-admin" element={<SystemAdminPage />} />
               <Route path="/system-admin/stores/:id" element={<StoreDetailPage />} />
+              <Route path="/floor-manager" element={<FloorManagerPage />} />
               <Route path="/profile" element={<ProfilePage />} />
             </Routes>
             <RoleSwitcher />

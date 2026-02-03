@@ -4,6 +4,7 @@ export const UserRole = {
   HQ_ADMIN: 'hq_admin',            // 公司管理
   AREA_MANAGER: 'area_manager',    // 地區經理
   STORE_MANAGER: 'store_manager',  // 專櫃櫃長
+  FLOOR_MANAGER: 'floor_manager',  // 百貨樓管
   STAFF: 'staff',                 // 專櫃人員
   TESTER: 'tester'                // 測試人員
 } as const;
@@ -130,10 +131,11 @@ export interface WorkHourStats {
 // 權限檢查函數
 export const hasPermission = (userRole: UserRole, requiredRole: UserRole): boolean => {
   const roleHierarchy = {
-    [UserRole.SYSTEM_ADMIN]: 6,
-    [UserRole.TESTER]: 5,
-    [UserRole.HQ_ADMIN]: 4,
-    [UserRole.AREA_MANAGER]: 3,
+    [UserRole.SYSTEM_ADMIN]: 7,
+    [UserRole.TESTER]: 6,
+    [UserRole.HQ_ADMIN]: 5,
+    [UserRole.AREA_MANAGER]: 4,
+    [UserRole.FLOOR_MANAGER]: 3,
     [UserRole.STORE_MANAGER]: 2,
     [UserRole.STAFF]: 1
   };
@@ -164,6 +166,11 @@ export const PERMISSIONS = {
   // 地區經理權限
   VIEW_AREA_STATS: 'view_area_stats',
   APPROVE_CROSS_STORE_LEAVE: 'approve_cross_store_leave',
+  
+  // 百貨樓管權限
+  VIEW_DEPARTMENT_STORES: 'view_department_stores',
+  VIEW_STORE_SCHEDULES: 'view_store_schedules',
+  VIEW_STORE_STAFF: 'view_store_staff',
   
   // 專櫃櫃長權限
   MANAGE_STORE_SCHEDULE: 'manage_store_schedule',
@@ -234,6 +241,14 @@ export const ROLE_PERMISSIONS = {
     PERMISSIONS.MANAGE_STORE_SCHEDULE,
     PERMISSIONS.APPROVE_STAFF_LEAVE,
     PERMISSIONS.SET_STORE_ACTIVITIES,
+    PERMISSIONS.VIEW_OWN_SCHEDULE,
+    PERMISSIONS.REQUEST_LEAVE,
+    PERMISSIONS.VIEW_OWN_HOURS
+  ],
+  [UserRole.FLOOR_MANAGER]: [
+    PERMISSIONS.VIEW_DEPARTMENT_STORES,
+    PERMISSIONS.VIEW_STORE_SCHEDULES,
+    PERMISSIONS.VIEW_STORE_STAFF,
     PERMISSIONS.VIEW_OWN_SCHEDULE,
     PERMISSIONS.REQUEST_LEAVE,
     PERMISSIONS.VIEW_OWN_HOURS

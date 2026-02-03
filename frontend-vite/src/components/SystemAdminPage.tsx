@@ -61,6 +61,17 @@ const SystemAdminPage: React.FC = () => {
       updatedAt: '2026-01-01T00:00:00Z'
     },
     {
+      id: '6',
+      lineUserId: 'FLOOR_MANAGER_USER',
+      name: '樓管王大明',
+      email: 'wang@banban.com',
+      phone: '0966666666',
+      role: 'floor_manager' as any,
+      isActive: true,
+      createdAt: '2026-01-01T00:00:00Z',
+      updatedAt: '2026-01-01T00:00:00Z'
+    },
+    {
       id: '1',
       lineUserId: 'U1234567890',
       name: '總經理',
@@ -133,10 +144,11 @@ const SystemAdminPage: React.FC = () => {
 
   const getRoleLabel = (role: string) => {
     const roleMap = {
-      'system_admin': '班班營運團隊',
+      'system_admin': '系統管理員',
       'tester': '測試人員',
       'hq_admin': '公司管理',
       'area_manager': '地區經理',
+      'floor_manager': '百貨樓管',
       'store_manager': '專櫃櫃長',
       'staff': '專櫃人員'
     };
@@ -149,6 +161,7 @@ const SystemAdminPage: React.FC = () => {
       'tester': 'bg-pink-100 text-pink-800',
       'hq_admin': 'bg-red-100 text-red-800',
       'area_manager': 'bg-orange-100 text-orange-800',
+      'floor_manager': 'bg-teal-100 text-teal-800',
       'store_manager': 'bg-blue-100 text-blue-800',
       'staff': 'bg-green-100 text-green-800'
     };
