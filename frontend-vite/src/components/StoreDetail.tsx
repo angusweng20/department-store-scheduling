@@ -26,6 +26,10 @@ interface StoreDetailProps {
 }
 
 const StoreDetail: React.FC<StoreDetailProps> = ({ stores, companyName, onBack }) => {
+  console.log('🏪🏪🏪 StoreDetail 組件載入！🏪🏪🏪');
+  console.log('🏪🏪🏪 收到的 stores:', stores);
+  console.log('🏪🏪🏪 收到的 companyName:', companyName);
+  
   const [showStoreModal, setShowStoreModal] = useState(false);
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [selectedStore, setSelectedStore] = useState<any>(null);
