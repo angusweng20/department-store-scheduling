@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { usePermission } from '../context/PermissionContext';
 import ProtectedRoute from './ProtectedRoute';
 import Modal from './Modal';
@@ -8,6 +9,7 @@ import type { User, Store } from '../types/permissions';
 
 const SystemAdminPage: React.FC = () => {
   const { hasPermission } = usePermission();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'overview' | 'department' | 'company' | 'stores' | 'users' | 'system'>('overview');
   
   // 模態框狀態
@@ -201,16 +203,12 @@ const SystemAdminPage: React.FC = () => {
   };
 
   const handleEditStore = (store: Store) => {
-    setStoreModalMode('edit');
-    setSelectedStore(store);
-    setShowStoreModal(true);
+    navigate(`/system-admin/stores/${store.id}`);
     console.log('🏪 編輯專櫃:', store);
   };
 
   const handleViewStore = (store: Store) => {
-    setStoreModalMode('view');
-    setSelectedStore(store);
-    setShowStoreModal(true);
+    navigate(`/system-admin/stores/${store.id}`);
     console.log('🏪 查看專櫃:', store);
   };
 
