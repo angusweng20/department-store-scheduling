@@ -16,6 +16,11 @@ const SystemAdminPage: React.FC = () => {
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [selectedCompany, setSelectedCompany] = useState<any>(null);
 
+  // 專櫃管理狀態
+  const [showStoreModal, setShowStoreModal] = useState(false);
+  const [storeModalMode, setStoreModalMode] = useState<'add' | 'edit' | 'view'>('add');
+  const [selectedStore, setSelectedStore] = useState<any>(null);
+
   // Mock 系統統計資料
   const systemStats = {
     totalUsers: 156,
@@ -185,6 +190,42 @@ const SystemAdminPage: React.FC = () => {
     setSelectedCompany(null);
     
     console.log('🚨🚨🚨 handleCloseModal 執行完成！🚨🚨🚨');
+  };
+
+  // 專櫃管理函數
+  const handleAddStore = () => {
+    setStoreModalMode('add');
+    setSelectedStore(null);
+    setShowStoreModal(true);
+    console.log('🏪 新增專櫃');
+  };
+
+  const handleEditStore = (store: Store) => {
+    setStoreModalMode('edit');
+    setSelectedStore(store);
+    setShowStoreModal(true);
+    console.log('🏪 編輯專櫃:', store);
+  };
+
+  const handleViewStore = (store: Store) => {
+    setStoreModalMode('view');
+    setSelectedStore(store);
+    setShowStoreModal(true);
+    console.log('🏪 查看專櫃:', store);
+  };
+
+  const handleDeleteStore = (store: Store) => {
+    if (window.confirm(`確定要刪除專櫃「${store.name}」嗎？`)) {
+      console.log('🏪 刪除專櫃:', store);
+      // 這裡應該調用 API 刪除專櫃
+      alert(`專櫃「${store.name}」已刪除`);
+    }
+  };
+
+  const handleCloseStoreModal = () => {
+    setShowStoreModal(false);
+    setSelectedStore(null);
+    setStoreModalMode('add');
   };
 
   const tabs = [
@@ -629,8 +670,18 @@ const SystemAdminPage: React.FC = () => {
           {activeTab === 'stores' && (
             <div className="space-y-6">
               <div className="bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">專櫃管理</h2>
-                <p className="text-gray-600 mb-6">管理所有公司的專櫃資訊，包括新增、編輯、刪除專櫃等功能。</p>
+                <div className="flex justify-between items-center mb-6">
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-900">專櫃管理</h2>
+                    <p className="text-gray-600">管理所有公司的專櫃資訊，包括新增、編輯、刪除專櫃等功能。</p>
+                  </div>
+                  <button 
+                    onClick={handleAddStore}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                  >
+                    ➕ 新增專櫃
+                  </button>
+                </div>
                 
                 {/* 專櫃統計 */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
@@ -715,13 +766,22 @@ const SystemAdminPage: React.FC = () => {
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <button className="text-blue-600 hover:text-blue-900 mr-3">
+                            <button 
+                              onClick={() => handleEditStore(store)}
+                              className="text-blue-600 hover:text-blue-900 mr-3"
+                            >
                               編輯
                             </button>
-                            <button className="text-gray-600 hover:text-gray-900 mr-3">
+                            <button 
+                              onClick={() => handleViewStore(store)}
+                              className="text-gray-600 hover:text-gray-900 mr-3"
+                            >
                               查看
                             </button>
-                            <button className="text-red-600 hover:text-red-900">
+                            <button 
+                              onClick={() => handleDeleteStore(store)}
+                              className="text-red-600 hover:text-red-900"
+                            >
                               刪除
                             </button>
                           </td>
@@ -806,6 +866,146 @@ const SystemAdminPage: React.FC = () => {
             onClose={handleCloseModal}
           />
         )}
+      </Modal>
+
+      {/* 專櫃模態框 */}
+      <Modal
+        isOpen={showStoreModal}
+        onClose={handleCloseStoreModal}
+        title={storeModalMode === 'add' ? '新增專櫃' : storeModalMode === 'edit' ? '編輯專櫃' : '查看專櫃'}
+        size="lg"
+      >
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">專櫃名稱</label>
+              <input
+                type="text"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                defaultValue={selectedStore?.name || ''}
+                disabled={storeModalMode === 'view'}
+                placeholder="請輸入專櫃名稱"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">專櫃代碼</label>
+              <input
+                type="text"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                defaultValue={selectedStore?.code || ''}
+                disabled={storeModalMode === 'view'}
+                placeholder="請輸入專櫃代碼"
+              />
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">所屬公司</label>
+              <select
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                defaultValue={selectedStore?.companyId || ''}
+                disabled={storeModalMode === 'view'}
+              >
+                <option value="">請選擇公司</option>
+                <option value="company-1">拉拉百貨股份有限公司</option>
+                <option value="company-2">班班百貨股份有限公司</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">地區</label>
+              <select
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                defaultValue={selectedStore?.areaId || ''}
+                disabled={storeModalMode === 'view'}
+              >
+                <option value="">請選擇地區</option>
+                <option value="area-1">台北地區</option>
+                <option value="area-2">台中地區</option>
+                <option value="area-3">高雄地區</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">櫃長姓名</label>
+              <input
+                type="text"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                defaultValue={selectedStore?.managerName || ''}
+                disabled={storeModalMode === 'view'}
+                placeholder="請輸入櫃長姓名"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">員工數量</label>
+              <input
+                type="number"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                defaultValue={selectedStore?.employeeCount || ''}
+                disabled={storeModalMode === 'view'}
+                placeholder="請輸入員工數量"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">地址</label>
+            <input
+              type="text"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              defaultValue={selectedStore?.address || ''}
+              disabled={storeModalMode === 'view'}
+              placeholder="請輸入專櫃地址"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">電話</label>
+              <input
+                type="tel"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                defaultValue={selectedStore?.phone || ''}
+                disabled={storeModalMode === 'view'}
+                placeholder="請輸入專櫃電話"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">狀態</label>
+              <select
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                defaultValue={selectedStore?.status || 'active'}
+                disabled={storeModalMode === 'view'}
+              >
+                <option value="active">營運中</option>
+                <option value="inactive">停用</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="flex justify-end space-x-3 pt-4 border-t">
+            <button
+              onClick={handleCloseStoreModal}
+              className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
+            >
+              {storeModalMode === 'view' ? '關閉' : '取消'}
+            </button>
+            {storeModalMode !== 'view' && (
+              <button
+                onClick={() => {
+                  console.log(`${storeModalMode === 'add' ? '新增' : '更新'}專櫃`);
+                  alert(`${storeModalMode === 'add' ? '新增' : '更新'}專櫃成功！`);
+                  handleCloseStoreModal();
+                }}
+                className="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
+              >
+                {storeModalMode === 'add' ? '新增' : '更新'}
+              </button>
+            )}
+          </div>
+        </div>
       </Modal>
     </ProtectedRoute>
   );
