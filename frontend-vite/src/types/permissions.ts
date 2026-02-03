@@ -22,7 +22,16 @@ export interface Store {
   name: string;
   code: string; // 如：台中拉拉、南港拉拉
   areaId: string; // 所屬地區
+  areaName?: string; // 地區名稱
   managerId?: string; // 櫃長ID
+  managerName?: string; // 櫃長姓名
+  companyId?: string; // 所屬公司ID
+  companyName?: string; // 公司名稱
+  address?: string; // 地址
+  phone?: string; // 電話
+  email?: string; // 郵箱
+  status?: 'active' | 'inactive'; // 狀態
+  employeeCount?: number; // 員工數量
   isActive: boolean;
   createdAt: string;
   updatedAt: string;

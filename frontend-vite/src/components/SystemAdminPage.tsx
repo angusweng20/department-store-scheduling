@@ -8,7 +8,7 @@ import type { User, Store } from '../types/permissions';
 
 const SystemAdminPage: React.FC = () => {
   const { hasPermission } = usePermission();
-  const [activeTab, setActiveTab] = useState<'overview' | 'department' | 'company' | 'users' | 'system'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'department' | 'company' | 'stores' | 'users' | 'system'>('overview');
   
   // 模態框狀態
   const [showCompanyModal, setShowCompanyModal] = useState(false);
@@ -191,6 +191,7 @@ const SystemAdminPage: React.FC = () => {
     { id: 'overview', label: '系統概覽', icon: '📊' },
     { id: 'department', label: '百貨管理', icon: '🏬' },
     { id: 'company', label: '公司管理', icon: '🏢' },
+    { id: 'stores', label: '專櫃管理', icon: '🏪' },
     { id: 'users', label: '用戶管理', icon: '👥' },
     { id: 'system', label: '系統設定', icon: '⚙️' }
   ];
@@ -620,6 +621,115 @@ const SystemAdminPage: React.FC = () => {
                     ))}
                   </tbody>
                 </table>
+              </div>
+            </div>
+          )}
+
+          {/* 專櫃管理 */}
+          {activeTab === 'stores' && (
+            <div className="space-y-6">
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">專櫃管理</h2>
+                <p className="text-gray-600 mb-6">管理所有公司的專櫃資訊，包括新增、編輯、刪除專櫃等功能。</p>
+                
+                {/* 專櫃統計 */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                  <div className="bg-blue-50 rounded-lg p-4">
+                    <div className="text-2xl font-bold text-blue-600">12</div>
+                    <div className="text-sm text-blue-800">總專櫃數</div>
+                  </div>
+                  <div className="bg-green-50 rounded-lg p-4">
+                    <div className="text-2xl font-bold text-green-600">10</div>
+                    <div className="text-sm text-green-800">營運中</div>
+                  </div>
+                  <div className="bg-orange-50 rounded-lg p-4">
+                    <div className="text-2xl font-bold text-orange-600">85</div>
+                    <div className="text-sm text-orange-800">總員工數</div>
+                  </div>
+                  <div className="bg-purple-50 rounded-lg p-4">
+                    <div className="text-2xl font-bold text-purple-600">83%</div>
+                    <div className="text-sm text-purple-800">營運率</div>
+                  </div>
+                </div>
+
+                {/* 專櫃列表 */}
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          專櫃名稱
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          專櫃代碼
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          所屬公司
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          地區
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          櫃長
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          員工數
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          狀態
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          操作
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {mockStores.map((store) => (
+                        <tr key={store.id}>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm font-medium text-gray-900">{store.name}</div>
+                            <div className="text-sm text-gray-500">{store.address}</div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {store.code}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {store.companyName}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {store.areaName}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {store.managerName}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {store.employeeCount}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${
+                              store.status === 'active'
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-red-100 text-red-800'
+                            }`}>
+                              {store.status === 'active' ? '營運中' : '停用'}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button className="text-blue-600 hover:text-blue-900 mr-3">
+                              編輯
+                            </button>
+                            <button className="text-gray-600 hover:text-gray-900 mr-3">
+                              查看
+                            </button>
+                            <button className="text-red-600 hover:text-red-900">
+                              刪除
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           )}
