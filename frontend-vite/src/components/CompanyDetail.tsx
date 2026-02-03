@@ -77,13 +77,6 @@ const CompanyDetail: React.FC<CompanyDetailProps> = ({ company, onEdit, onClose 
   useEffect(() => {
     console.log('🔥🔥🔥 CompanyDetail 組件掛載 - VERSION 5.0 🔥🔥🔥');
     
-    // 添加全局點擊監控
-    const handleGlobalClick = (e: MouseEvent) => {
-      console.log('🌍🌍🌍 全局點擊事件:', e.target);
-      console.log('🌍🌍🌍 點擊元素:', (e.target as HTMLElement).tagName);
-      console.log('🌍🌍🌍 點擊元素類名:', (e.target as HTMLElement).className);
-    };
-    
     // 捕獲階段阻止背景點擊
     const handleCaptureClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -94,25 +87,17 @@ const CompanyDetail: React.FC<CompanyDetailProps> = ({ company, onEdit, onClose 
       }
     };
     
-    document.addEventListener('click', handleGlobalClick);
     document.addEventListener('click', handleCaptureClick, true); // 捕獲階段
     
     return () => {
-      console.log('🚨🚨🚨 CompanyDetail 組件卸載！這可能是問題所在！🚨🚨🚨');
-      document.removeEventListener('click', handleGlobalClick);
+      console.log('🚨🚨🚨 CompanyDetail 組件卸載！🚨🚨🚨');
       document.removeEventListener('click', handleCaptureClick, true);
     };
   }, []);
 
   const handleViewStores = () => {
     console.log('🔥🔥🔥 handleViewStores 開始 (VERSION 5.0) 🔥🔥🔥');
-    console.log('當前 showStoreDetail 狀態:', showStoreDetail);
-    console.log('companyStores 數量:', companyStores.length);
-    console.log('當前時間:', new Date().toISOString());
-    
-    // 強制設置狀態
     setShowStoreDetail(true);
-    console.log('🔥🔥🔥 設置 showStoreDetail 為 true');
     console.log('🔥🔥🔥 handleViewStores 結束 (VERSION 5.0) 🔥🔥🔥');
   };
 
@@ -231,28 +216,9 @@ const CompanyDetail: React.FC<CompanyDetailProps> = ({ company, onEdit, onClose 
           <h3 className="text-lg font-medium text-gray-900">所屬專櫃</h3>
           <button
             onClick={(e) => {
-              console.log('🚨🚨🚨 管理專櫃按鈕被點擊！開始執行！🚨🚨🚨');
-              console.log('🚨🚨🚨 事件對象:', e);
-              console.log('🚨🚨🚨 當前 showStoreDetail:', showStoreDetail);
-              
               e.preventDefault();
               e.stopPropagation();
-              
-              console.log('🔥🔥🔥 管理專櫃按鈕被點擊 (VERSION 4.0) 🔥🔥🔥');
-              console.log('管理專櫃按鈕被點擊');
               handleViewStores();
-              
-              console.log('🚨🚨🚨 handleViewStores 調用完成！🚨🚨🚨');
-            }}
-            onMouseDown={(e) => {
-              console.log('🖱️🖱️🖱️ 管理專櫃按鈕 onMouseDown！🖱️🖱️🖱️');
-              e.preventDefault();
-              e.stopPropagation();
-            }}
-            onMouseUp={(e) => {
-              console.log('🖱️🖱️🖱️ 管理專櫃按鈕 onMouseUp！🖱️🖱️🖱️');
-              e.preventDefault();
-              e.stopPropagation();
             }}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm relative z-50"
             style={{ pointerEvents: 'auto', position: 'relative', zIndex: 50 }}
