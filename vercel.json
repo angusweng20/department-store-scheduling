@@ -1,4 +1,7 @@
 {
+  "buildCommand": "cd frontend-vite && npm run build",
+  "outputDirectory": "frontend-vite/dist",
+  "installCommand": "cd frontend-vite && npm install",
   "rewrites": [
     {
       "source": "/system-admin",
@@ -11,7 +14,7 @@
   ],
   "headers": [
     {
-      "source": "/assets/(.*)",
+      "source": "/system-admin/assets/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
