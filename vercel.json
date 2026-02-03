@@ -1,0 +1,23 @@
+{
+  "rewrites": [
+    {
+      "source": "/system-admin",
+      "destination": "/system-admin/index.html"
+    },
+    {
+      "source": "/system-admin/:path*",
+      "destination": "/system-admin/:path*"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ]
+}
