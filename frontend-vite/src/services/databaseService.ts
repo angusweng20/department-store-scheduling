@@ -1,4 +1,4 @@
-import { supabase } from '../utils/supabase';
+import { supabase, isSupabaseConfigured } from '../utils/supabase';
 
 // 型別定義
 export interface Department {
@@ -103,7 +103,11 @@ export interface User {
 export const departmentService = {
   // 獲取所有百貨
   async getAll(): Promise<Department[]> {
-    const { data, error } = await supabase
+    if (!isSupabaseConfigured()) {
+      throw new Error('Supabase 未正確配置');
+    }
+    
+    const { data, error } = await supabase!
       .from('departments')
       .select('*')
       .order('created_at', { ascending: false });
@@ -114,7 +118,11 @@ export const departmentService = {
 
   // 根據ID獲取百貨
   async getById(id: string): Promise<Department | null> {
-    const { data, error } = await supabase
+    if (!isSupabaseConfigured()) {
+      throw new Error('Supabase 未正確配置');
+    }
+    
+    const { data, error } = await supabase!
       .from('departments')
       .select('*')
       .eq('id', id)
@@ -126,7 +134,11 @@ export const departmentService = {
 
   // 創建百貨
   async create(department: Omit<Department, 'id' | 'created_at' | 'updated_at'>): Promise<Department> {
-    const { data, error } = await supabase
+    if (!isSupabaseConfigured()) {
+      throw new Error('Supabase 未正確配置');
+    }
+    
+    const { data, error } = await supabase!
       .from('departments')
       .insert(department)
       .select()
@@ -138,7 +150,11 @@ export const departmentService = {
 
   // 更新百貨
   async update(id: string, department: Partial<Department>): Promise<Department> {
-    const { data, error } = await supabase
+    if (!isSupabaseConfigured()) {
+      throw new Error('Supabase 未正確配置');
+    }
+    
+    const { data, error } = await supabase!
       .from('departments')
       .update(department)
       .eq('id', id)
@@ -151,7 +167,11 @@ export const departmentService = {
 
   // 刪除百貨
   async delete(id: string): Promise<void> {
-    const { error } = await supabase
+    if (!isSupabaseConfigured()) {
+      throw new Error('Supabase 未正確配置');
+    }
+    
+    const { error } = await supabase!
       .from('departments')
       .delete()
       .eq('id', id);
@@ -164,7 +184,11 @@ export const departmentService = {
 export const companyService = {
   // 獲取所有公司
   async getAll(): Promise<Company[]> {
-    const { data, error } = await supabase
+    if (!isSupabaseConfigured()) {
+      throw new Error('Supabase 未正確配置');
+    }
+    
+    const { data, error } = await supabase!
       .from('companies')
       .select('*')
       .order('created_at', { ascending: false });
@@ -173,9 +197,13 @@ export const companyService = {
     return data || [];
   },
 
-  // 根據ID獲取公司
+  // 根根據ID獲取公司
   async getById(id: string): Promise<Company | null> {
-    const { data, error } = await supabase
+    if (!isSupabaseConfigured()) {
+      throw new Error('Supabase 未正確配置');
+    }
+    
+    const { data, error } = await supabase!
       .from('companies')
       .select('*')
       .eq('id', id)
@@ -187,7 +215,11 @@ export const companyService = {
 
   // 創建公司
   async create(company: Omit<Company, 'id' | 'created_at' | 'updated_at'>): Promise<Company> {
-    const { data, error } = await supabase
+    if (!isSupabaseConfigured()) {
+      throw new Error('Supabase 未正確配置');
+    }
+    
+    const { data, error } = await supabase!
       .from('companies')
       .insert(company)
       .select()
@@ -199,7 +231,11 @@ export const companyService = {
 
   // 更新公司
   async update(id: string, company: Partial<Company>): Promise<Company> {
-    const { data, error } = await supabase
+    if (!isSupabaseConfigured()) {
+      throw new Error('Supabase 未正確配置');
+    }
+    
+    const { data, error } = await supabase!
       .from('companies')
       .update(company)
       .eq('id', id)
@@ -212,7 +248,11 @@ export const companyService = {
 
   // 刪除公司
   async delete(id: string): Promise<void> {
-    const { error } = await supabase
+    if (!isSupabaseConfigured()) {
+      throw new Error('Supabase 未正確配置');
+    }
+    
+    const { error } = await supabase!
       .from('companies')
       .delete()
       .eq('id', id);
