@@ -14,15 +14,9 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, size = 
   console.log('🔥🔥🔥 Modal 組件渲染 - title:', title, 'size:', size);
 
   const handleClose = () => {
-    console.log('🚨🚨🚨 Modal onClose 被調用！這可能是導致組件卸載的原因！🚨🚨🚨');
+    console.log('🚨🚨🚨 Modal onClose 被調用！🚨🚨🚨');
     console.log('🚨🚨🚨 Modal title:', title);
-    console.log('🚨🚨🚨 調用堆疊:', new Error().stack);
-    
-    // 延遲一點再關閉，看看是否能避免狀態衝突
-    setTimeout(() => {
-      console.log('🚨🚨🚨 延遲執行 onClose');
-      onClose();
-    }, 10);
+    onClose();
   };
 
   const sizeClasses = {

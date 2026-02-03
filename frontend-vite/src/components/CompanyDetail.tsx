@@ -77,21 +77,8 @@ const CompanyDetail: React.FC<CompanyDetailProps> = ({ company, onEdit, onClose 
   useEffect(() => {
     console.log('🔥🔥🔥 CompanyDetail 組件掛載 - VERSION 5.0 🔥🔥🔥');
     
-    // 捕獲階段阻止背景點擊
-    const handleCaptureClick = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (target.classList.contains('bg-gray-500') && target.classList.contains('bg-opacity-75')) {
-        console.log('🛑🛑🛑 捕獲階段阻止背景點擊！🛑🛑🛑');
-        e.stopPropagation();
-        e.preventDefault();
-      }
-    };
-    
-    document.addEventListener('click', handleCaptureClick, true); // 捕獲階段
-    
     return () => {
       console.log('🚨🚨🚨 CompanyDetail 組件卸載！🚨🚨🚨');
-      document.removeEventListener('click', handleCaptureClick, true);
     };
   }, []);
 
