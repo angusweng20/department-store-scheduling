@@ -75,7 +75,7 @@ const CompanyDetail: React.FC<CompanyDetailProps> = ({ company, onEdit, onClose 
 
   // 監控組件卸載
   useEffect(() => {
-    console.log('🔥🔥🔥 CompanyDetail 組件掛載 - VERSION 4.0 🔥🔥🔥');
+    console.log('🔥🔥🔥 CompanyDetail 組件掛載 - VERSION 5.0 🔥🔥🔥');
     
     // 添加全局點擊監控
     const handleGlobalClick = (e: MouseEvent) => {
@@ -84,11 +84,23 @@ const CompanyDetail: React.FC<CompanyDetailProps> = ({ company, onEdit, onClose 
       console.log('🌍🌍🌍 點擊元素類名:', (e.target as HTMLElement).className);
     };
     
+    // 捕獲階段阻止背景點擊
+    const handleCaptureClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.classList.contains('bg-gray-500') && target.classList.contains('bg-opacity-75')) {
+        console.log('🛑🛑🛑 捕獲階段阻止背景點擊！🛑🛑🛑');
+        e.stopPropagation();
+        e.preventDefault();
+      }
+    };
+    
     document.addEventListener('click', handleGlobalClick);
+    document.addEventListener('click', handleCaptureClick, true); // 捕獲階段
     
     return () => {
       console.log('🚨🚨🚨 CompanyDetail 組件卸載！這可能是問題所在！🚨🚨🚨');
       document.removeEventListener('click', handleGlobalClick);
+      document.removeEventListener('click', handleCaptureClick, true);
     };
   }, []);
 
@@ -148,7 +160,7 @@ const CompanyDetail: React.FC<CompanyDetailProps> = ({ company, onEdit, onClose 
     }
   }
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" onClick={(e) => e.stopPropagation()}>
       {/* 公司基本資訊 */}
       <div>
         <h3 className="text-lg font-medium text-gray-900 mb-4">公司基本資訊</h3>
@@ -214,7 +226,7 @@ const CompanyDetail: React.FC<CompanyDetailProps> = ({ company, onEdit, onClose 
       </div>
 
       {/* 櫃點列表 */}
-      <div>
+      <div onClick={(e) => e.stopPropagation()}>
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-medium text-gray-900">所屬專櫃</h3>
           <button
