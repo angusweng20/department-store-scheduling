@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // API 基礎配置
-const API_BASE_URL = 'https://department-store-scheduling.onrender.com';
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000').trim();
 
 // 創建 axios 實例
 const api = axios.create({
